@@ -41,7 +41,7 @@ api_router = APIRouter(prefix="/api")
 @api_router.get("/")
 async def root():
     return {
-        "message": "SimplePractice API",
+        "message": "DocPortal API",
         "version": "1.0.0",
         "status": "running",
         "timestamp": datetime.utcnow().isoformat()
