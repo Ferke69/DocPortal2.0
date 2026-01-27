@@ -37,11 +37,11 @@ const LandingPage = () => {
             {t('landing.description')}
           </p>
           <div className="flex justify-center space-x-4">
-            <Button size="lg" onClick={() => onSelectPortal('provider')} className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
+            <Button size="lg" onClick={() => navigate('/register')} className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
               {t('landing.getStartedProvider')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => onSelectPortal('client')} className="text-lg px-8 py-6">
+            <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="text-lg px-8 py-6">
               {t('landing.accessClientPortal')}
             </Button>
           </div>
