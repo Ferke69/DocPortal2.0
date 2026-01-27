@@ -40,6 +40,11 @@ async def create_appointment(
     # Create appointment
     appointment_dict = appointment.model_dump()
     appointment_id = str(uuid.uuid4())
+    
+    # Convert date to string for MongoDB storage
+    if isinstance(appointment_dict.get("date"), date):
+        appointment_dict["date"] = appointment_dict["date"].isoformat()
+    
     appointment_dict.update({
         "_id": appointment_id,
         "status": "pending",
