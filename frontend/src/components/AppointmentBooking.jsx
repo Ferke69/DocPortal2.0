@@ -147,47 +147,39 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Booking Form */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Select Provider */}
+            {/* Your Provider */}
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
                 <CardTitle className="flex items-center dark:text-white">
                   <User className="h-5 w-5 mr-2 text-purple-600" />
-                  Select Provider
+                  Your Provider
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {providers.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {providers.map((provider) => (
-                      <div
-                        key={provider.user_id}
-                        onClick={() => setSelectedProvider(provider)}
-                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                          selectedProvider?.user_id === provider.user_id
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 bg-white dark:bg-gray-700'
-                        }`}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <Avatar className="h-16 w-16">
-                            <AvatarImage src={provider.avatar} alt={provider.name} />
-                            <AvatarFallback>{getInitials(provider.name)}</AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="font-semibold text-gray-900 dark:text-white">{provider.name}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-300">{provider.specialty || 'Healthcare Provider'}</div>
-                            <div className="text-sm text-green-600 font-medium mt-1">
-                              ${provider.hourlyRate || 150}/hour
-                            </div>
-                          </div>
+                {noProvider ? (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <p className="mb-2">No provider assigned to your account.</p>
+                    <p className="text-sm">Please contact your healthcare provider for an invite code to connect your account.</p>
+                  </div>
+                ) : selectedProvider ? (
+                  <div className="p-4 rounded-lg border-2 border-green-500 bg-green-50 dark:bg-green-900/30">
+                    <div className="flex items-center space-x-4">
+                      <Avatar className="h-16 w-16">
+                        <AvatarImage src={selectedProvider.avatar} alt={selectedProvider.name} />
+                        <AvatarFallback>{getInitials(selectedProvider.name)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-900 dark:text-white">{selectedProvider.name}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-300">{selectedProvider.specialty || 'Healthcare Provider'}</div>
+                        <div className="text-sm text-green-600 font-medium mt-1">
+                          ${selectedProvider.hourlyRate || 150}/hour
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                    <p>No providers available at the moment.</p>
-                    <p className="text-sm mt-2">Please check back later or contact support.</p>
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                    Loading provider information...
                   </div>
                 )}
               </CardContent>
