@@ -183,7 +183,7 @@ class ClinicalNoteCreate(ClinicalNoteBase):
 
 class ClinicalNoteInDB(ClinicalNoteBase):
     id: str = Field(alias="_id")
-    date: date = Field(default_factory=date.today)
+    noteDate: date = Field(default_factory=date.today)
     content: dict
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
