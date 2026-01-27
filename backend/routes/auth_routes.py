@@ -200,3 +200,19 @@ async def logout(response: Response):
     """Logout user"""
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
+
+
+
+@router.get("/users/providers")
+async def get_all_providers():
+    """Get all providers for appointment booking"""
+    providers = await database.users.find(
+        {"userType": "provider"},
+        {"hashed_password": 0}  # Exclude password
+    ).to_list(100)
+    
+    # Convert ObjectId to string
+    for provider in providers:
+        provider["_id"] = str(provider["_id"])
+    
+    return providers
