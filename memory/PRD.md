@@ -56,19 +56,19 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 - **Integration**: All dashboard flows working end-to-end
 
 ## Known Limitations
-- **Stripe**: Uses test/placeholder keys (MOCKED payment flow)
-- **Google Meet**: Placeholder links (no real API integration)
+- **Stripe**: Uses test/placeholder keys (MOCKED payment flow - no real charges)
+- **Google Meet**: Placeholder links generated (format: meet.google.com/xxx-yyyy-zzz)
 - **Google OAuth**: May show 403 on first use (Emergent Auth needs domain registration)
 
 ## Pending Tasks (P1)
-1. Connect remaining components (MessagingCenter, AppointmentBooking, BillingPayments) to live APIs
-2. Full EHR/Notes UI implementation
-3. Real video call integration
+1. Full EHR/Notes UI implementation
+2. Real video call integration (Google Meet API or alternative)
 
 ## Future Tasks (P2)
 1. Comprehensive unit/integration tests
 2. Email notifications integration
 3. Production deployment configuration
+4. Real Stripe integration with webhook handling
 
 ## Test Credentials
 - **Client**: testclient_1769486748@example.com / TestPass123!
