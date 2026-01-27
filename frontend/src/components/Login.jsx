@@ -55,7 +55,7 @@ const Login = () => {
       
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="text-3xl font-bold text-blue-600 mb-2">SimplePractice</div>
+          <div className="text-3xl font-bold text-blue-600 mb-2">DocPortal</div>
           <CardTitle className="text-2xl">{t('landing.providerLogin')}</CardTitle>
           <p className="text-gray-600 text-sm mt-2">
             Sign in to manage your practice or access your client portal
