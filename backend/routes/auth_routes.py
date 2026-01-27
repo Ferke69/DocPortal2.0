@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Response, Request
 from fastapi.responses import JSONResponse
 from models import UserCreate, UserResponse, Token, LoginRequest, GoogleAuthRequest, TokenData
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
-from database import users_collection, log_audit
+from database import users_collection, invite_codes_collection, log_audit
 import httpx
 from datetime import datetime, timezone, timedelta
 from bson import ObjectId
@@ -12,6 +12,21 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 # REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
 
+async def validate_invite_code(code: str):
+    """Validate an invite code and return the associated provider"""
+    invite = await invite_codes_collection.find_one({"code": code})
+    
+    if not invite:
+        return None, "Invalid invite code"
+    
+    if invite.get("used"):
+        return None, "This invite code has already been used"
+    
+    if datetime.now(timezone.utc) > invite.get("expiresAt"):
+        return None, "This invite code has expired"
+    
+    return invite, None
+
 @router.post("/register", response_model=dict)
 async def register(user: UserCreate):
     """Register new user (provider or client)"""
@@ -20,6 +35,24 @@ async def register(user: UserCreate):
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
+    # For clients, validate invite code
+    provider_id = None
+    if user.userType == "client":
+        if not user.inviteCode:
+            raise HTTPException(status_code=400, detail="Invite code is required for client registration")
+        
+        invite, error = await validate_invite_code(user.inviteCode)
+        if error:
+            raise HTTPException(status_code=400, detail=error)
+        
+        provider_id = invite["providerId"]
+        
+        # Mark invite code as used
+        await invite_codes_collection.update_one(
+            {"code": user.inviteCode},
+            {"$set": {"used": True, "usedAt": datetime.now(timezone.utc)}}
+        )
+    
     # Generate custom user_id
     user_id = f"user_{uuid.uuid4().hex[:12]}"
     
@@ -27,13 +60,17 @@ async def register(user: UserCreate):
     hashed_password = get_password_hash(user.password)
     
     # Create user document
-    user_dict = user.model_dump(exclude={"password"})
+    user_dict = user.model_dump(exclude={"password", "inviteCode"})
     user_dict.update({
         "user_id": user_id,
         "password": hashed_password,
         "createdAt": datetime.now(timezone.utc),
         "updatedAt": datetime.now(timezone.utc)
     })
+    
+    # Set providerId for clients
+    if user.userType == "client" and provider_id:
+        user_dict["providerId"] = provider_id
     
     # Insert user
     await users_collection.insert_one(user_dict)
@@ -51,7 +88,7 @@ async def register(user: UserCreate):
         {"_id": 0, "password": 0}
     )
     
-    await log_audit(user_id, "create", "user", user_id, {"action": "register"})
+    await log_audit(user_id, "create", "user", user_id, {"action": "register", "userType": user.userType})
     
     return {
         "token": token,
