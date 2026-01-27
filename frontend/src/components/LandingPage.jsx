@@ -1,12 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Calendar, Shield, Video, Clock, Users, CheckCircle, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import LanguageSelector from './LanguageSelector';
 
-const LandingPage = ({ onSelectPortal }) => {
+const LandingPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -17,8 +19,8 @@ const LandingPage = ({ onSelectPortal }) => {
             <div className="text-2xl font-bold text-blue-600">SimplePractice</div>
             <div className="flex items-center space-x-4">
               <LanguageSelector />
-              <Button variant="outline" onClick={() => onSelectPortal('client')}>{t('landing.clientLogin')}</Button>
-              <Button onClick={() => onSelectPortal('provider')} className="bg-blue-600 hover:bg-blue-700">{t('landing.providerLogin')}</Button>
+              <Button variant="outline" onClick={() => navigate('/login')}>{t('landing.clientLogin')}</Button>
+              <Button onClick={() => navigate('/login')} className="bg-blue-600 hover:bg-blue-700">{t('landing.providerLogin')}</Button>
             </div>
           </div>
         </div>
