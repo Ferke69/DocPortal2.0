@@ -105,9 +105,9 @@ const Register = () => {
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" data-testid="register-form">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center space-x-2">
+              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center space-x-2" data-testid="register-error">
                 <AlertCircle className="h-5 w-5" />
                 <span className="text-sm">{error}</span>
               </div>
