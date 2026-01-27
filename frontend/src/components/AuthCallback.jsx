@@ -22,16 +22,20 @@ const AuthCallback = () => {
 
         if (!sessionId) {
           console.error('No session_id found in URL');
-          navigate('/login', { state: { error: 'Authentication failed' } });
+          navigate('/provider/login', { state: { error: 'Authentication failed' } });
           return;
         }
 
-        // Get intended user type from sessionStorage
+        // Get intended user type and invite code from sessionStorage
         const intendedUserType = sessionStorage.getItem('intended_user_type') || 'client';
-        sessionStorage.removeItem('intended_user_type'); // Clean up
+        const inviteCode = sessionStorage.getItem('invite_code') || null;
+        
+        // Clean up sessionStorage
+        sessionStorage.removeItem('intended_user_type');
+        sessionStorage.removeItem('invite_code');
 
         // Exchange session_id for user data
-        const result = await loginWithGoogle(sessionId, intendedUserType);
+        const result = await loginWithGoogle(sessionId, intendedUserType, inviteCode);
 
         if (result.success) {
           // Navigate based on user type
@@ -41,11 +45,13 @@ const AuthCallback = () => {
             navigate('/client/dashboard', { replace: true });
           }
         } else {
-          navigate('/login', { state: { error: result.error } });
+          // Navigate to appropriate login page based on intended user type
+          const loginPath = intendedUserType === 'provider' ? '/provider/login' : '/client/login';
+          navigate(loginPath, { state: { error: result.error } });
         }
       } catch (error) {
         console.error('Auth callback error:', error);
-        navigate('/login', { state: { error: 'Authentication failed' } });
+        navigate('/provider/login', { state: { error: 'Authentication failed' } });
       }
     };
 
@@ -53,10 +59,10 @@ const AuthCallback = () => {
   }, [location, navigate, loginWithGoogle]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Completing authentication...</p>
+        <p className="text-gray-600 dark:text-gray-300">Completing authentication...</p>
       </div>
     </div>
   );
