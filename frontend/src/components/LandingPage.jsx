@@ -31,19 +31,19 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             {t('landing.title')}
-            <span className="block text-blue-600 mt-2">{t('landing.subtitle')}</span>
+            <span className="block text-blue-600 dark:text-blue-400 mt-2">{t('landing.subtitle')}</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
             {t('landing.description')}
           </p>
           <div className="flex justify-center space-x-4">
-            <Button size="lg" onClick={() => navigate('/register')} className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
+            <Button size="lg" onClick={() => navigate('/register')} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-lg px-8 py-6">
               {t('landing.getStartedProvider')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="text-lg px-8 py-6">
+            <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="text-lg px-8 py-6 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
               {t('landing.accessClientPortal')}
             </Button>
           </div>
@@ -51,11 +51,11 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="bg-white py-20">
+      <section className="bg-white dark:bg-gray-800 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('landing.featuresTitle')}</h2>
-            <p className="text-xl text-gray-600">{t('landing.featuresSubtitle')}</p>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{t('landing.featuresTitle')}</h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300">{t('landing.featuresSubtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
