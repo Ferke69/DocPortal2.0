@@ -121,7 +121,7 @@ const ProviderDashboard = ({ onNavigate }) => {
 
   const deleteInviteCode = async (code) => {
     try {
-      await api.delete(`/api/provider/invite-codes/${code}`);
+      await api.delete(`/provider/invite-codes/${code}`);
       await fetchInviteCodes();
     } catch (err) {
       console.error('Error deleting invite code:', err);
