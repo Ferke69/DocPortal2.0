@@ -45,6 +45,8 @@ class UserCreate(UserBase):
     insurance: Optional[str] = None
     providerId: Optional[str] = None
     emergencyContact: Optional[EmergencyContact] = None
+    # Invite code (required for clients)
+    inviteCode: Optional[str] = None
 
 class UserInDB(UserBase):
     id: str = Field(alias="_id")
