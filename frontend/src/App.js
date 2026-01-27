@@ -77,6 +77,7 @@ function AppRoutes() {
       />
       <Route path="/login" element={user ? <DashboardRouter /> : <Login />} />
       <Route path="/register" element={user ? <DashboardRouter /> : <Register />} />
+      <Route path="/dashboard" element={<DashboardRouter />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
 
       {/* Provider Routes */}
