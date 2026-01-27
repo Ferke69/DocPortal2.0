@@ -1,4 +1,4 @@
-# SimplePractice Clone - Backend Implementation Contracts
+# DocPortal Clone - Backend Implementation Contracts
 
 ## Overview
 This document outlines the API contracts, data models, and integration points for the SimplePractice clone backend implementation.
