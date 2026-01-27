@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from auth import get_current_user
 from database import appointments_collection, users_collection, log_audit
 from models import AppointmentCreate, AppointmentUpdate
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 import uuid
 import secrets
 
