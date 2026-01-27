@@ -66,6 +66,11 @@ async def register(user: UserCreate):
     
     # Create user document
     user_dict = user.model_dump(exclude={"password", "inviteCode"})
+    
+    # Convert date objects to strings for MongoDB compatibility
+    if "dateOfBirth" in user_dict and user_dict["dateOfBirth"]:
+        user_dict["dateOfBirth"] = user_dict["dateOfBirth"].isoformat()
+    
     user_dict.update({
         "user_id": user_id,
         "password": hashed_password,
