@@ -289,9 +289,7 @@ const ClientPortal = ({ onNavigate }) => {
                 ) : (
                   <div className="text-center py-4 text-gray-500 dark:text-gray-400">
                     <p className="mb-3">No provider assigned yet</p>
-                    <Button variant="outline" size="sm" onClick={() => onNavigate('book-appointment')} className="dark:border-gray-600 dark:text-gray-300">
-                      Find a Provider
-                    </Button>
+                    <p className="text-sm">Please contact your healthcare provider for an invite code to connect your account.</p>
                   </div>
                 )}
               </CardContent>
