@@ -96,7 +96,7 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     """Close database connection on shutdown"""
-    logger.info("Shutting down SimplePractice API...")
+    logger.info("Shutting down DocPortal API...")
     client.close()
     logger.info("✓ Database connection closed")
 
