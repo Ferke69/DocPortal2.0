@@ -85,11 +85,11 @@ logger = logging.getLogger(__name__)
 @app.on_event("startup")
 async def startup_event():
     """Initialize database indexes on startup"""
-    logger.info("Starting SimplePractice API...")
+    logger.info("Starting DocPortal API...")
     try:
         await init_db()
         logger.info("✓ Database initialized successfully")
-        logger.info("✓ SimplePractice API is ready")
+        logger.info("✓ DocPortal API is ready")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
 
