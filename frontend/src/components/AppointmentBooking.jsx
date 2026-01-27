@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useAuth } from '../contexts/AuthContext';
-import { appointmentsApi, usersApi } from '../services/api';
+import { appointmentsApi, clientApi } from '../services/api';
 import { toast } from '../hooks/use-toast';
 import ThemeToggle from './ThemeToggle';
 
@@ -15,9 +15,9 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [appointmentType, setAppointmentType] = useState('Initial Consultation');
-  const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
+  const [noProvider, setNoProvider] = useState(false);
 
   // Time slots
   const timeSlots = [
@@ -35,22 +35,23 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
   ];
 
   useEffect(() => {
-    fetchProviders();
+    fetchProvider();
   }, []);
 
-  const fetchProviders = async () => {
+  const fetchProvider = async () => {
     try {
       setLoading(true);
-      const response = await usersApi.getProviders();
-      const providersList = response.data || [];
-      setProviders(providersList);
-      if (providersList.length > 0) {
-        setSelectedProvider(providersList[0]);
+      // For clients, get their assigned provider
+      const response = await clientApi.getProvider();
+      if (response.data) {
+        setSelectedProvider(response.data);
+        setNoProvider(false);
+      } else {
+        setNoProvider(true);
       }
     } catch (err) {
-      console.error('Error fetching providers:', err);
-      // Use placeholder data if no providers in database yet
-      setProviders([]);
+      console.error('Error fetching provider:', err);
+      setNoProvider(true);
     } finally {
       setLoading(false);
     }
@@ -68,8 +69,8 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
 
     if (!selectedProvider) {
       toast({
-        title: "Missing provider",
-        description: "Please select a provider.",
+        title: "No provider assigned",
+        description: "You don't have an assigned provider yet.",
         variant: "destructive"
       });
       return;
