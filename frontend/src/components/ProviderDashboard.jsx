@@ -109,7 +109,7 @@ const ProviderDashboard = ({ onNavigate }) => {
   const generateInviteCode = async () => {
     setGeneratingCode(true);
     try {
-      const response = await api.post('/api/provider/invite-code', { expiresInDays: 7 });
+      const response = await api.post('/provider/invite-code', { expiresInDays: 7 });
       await fetchInviteCodes();
       copyToClipboard(response.data.code);
     } catch (err) {
