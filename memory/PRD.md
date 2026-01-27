@@ -73,7 +73,7 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 ## Test Credentials
 - **Client**: testclient_1769486748@example.com / TestPass123!
 - **Provider**: testprovider@example.com / TestPass123!
-- **API URL**: https://careflow-166.preview.emergentagent.com
+- **API URL**: https://progress-check-34.preview.emergentagent.com
 
 ## Key Files
 - `/app/frontend/src/services/api.js` - Centralized API service
