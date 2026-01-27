@@ -53,36 +53,41 @@ const Register = () => {
     setError('');
     setLoading(true);
 
-    const submitData = {
-      email: formData.email,
-      password: formData.password,
-      name: formData.name,
-      phone: formData.phone || null,
-      userType: formData.userType
-    };
+    try {
+      const submitData = {
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        phone: formData.phone || null,
+        userType: formData.userType
+      };
 
-    // Add provider-specific fields
-    if (formData.userType === 'provider') {
-      submitData.specialty = formData.specialty || null;
-      submitData.license = formData.license || null;
-      submitData.bio = formData.bio || null;
-      submitData.hourlyRate = formData.hourlyRate ? parseFloat(formData.hourlyRate) : null;
-    }
-
-    const result = await register(submitData);
-    
-    if (result.success) {
-      // Navigate based on user type
-      if (result.user.userType === 'provider') {
-        navigate('/provider/dashboard');
-      } else {
-        navigate('/client/dashboard');
+      // Add provider-specific fields
+      if (formData.userType === 'provider') {
+        submitData.specialty = formData.specialty || null;
+        submitData.license = formData.license || null;
+        submitData.bio = formData.bio || null;
+        submitData.hourlyRate = formData.hourlyRate ? parseFloat(formData.hourlyRate) : null;
       }
-    } else {
-      setError(result.error);
+
+      const result = await register(submitData);
+      
+      if (result.success) {
+        // Navigate based on user type
+        if (result.user?.userType === 'provider') {
+          navigate('/provider/dashboard');
+        } else {
+          navigate('/client/dashboard');
+        }
+      } else {
+        setError(result.error || 'Registration failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (
