@@ -21,31 +21,40 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 ### Completed (Jan 27, 2025)
 - [x] Application rebranding to "DocPortal"
 - [x] JWT authentication (login/register)
-- [x] Google OAuth with role selection (Provider/Client)
+- [x] Google OAuth with role selection (Provider/Client) - Updated redirect flow
 - [x] Dark/Light theme toggle
 - [x] i18n support for 8 languages
 - [x] Landing page with features section
 - [x] Login and Register pages
-- [x] Provider Dashboard (mock data)
-- [x] Client Portal (mock data)
+- [x] Provider Dashboard - **NOW CONNECTED TO LIVE API**
+- [x] Client Portal - **NOW CONNECTED TO LIVE API**
 - [x] Backend API routes for auth, appointments, messages, billing
 - [x] Database models for all entities
+- [x] API service layer (`/app/frontend/src/services/api.js`)
 
 ### Bug Fixes (Jan 27, 2025)
 - [x] Fixed dark mode text readability across all pages
 - [x] Fixed "Or continue with Google" text in Login page dark mode
 - [x] Added ThemeToggle to Register page
 - [x] Improved error handling in registration flow
+- [x] Fixed Google OAuth redirect flow (now redirects to /dashboard)
+
+### Frontend-Backend Integration (Jan 27, 2025)
+- [x] Created centralized API service with axios interceptors
+- [x] Connected ProviderDashboard to live /api/provider/* endpoints
+- [x] Connected ClientPortal to live /api/client/* endpoints
+- [x] Added loading states and error handling to dashboards
+- [x] Removed dependency on mock data for dashboards
 
 ## Current Status
-- **Backend**: 100% working (all auth endpoints tested)
-- **Frontend**: Pages built, dark mode functional
-- **Integration**: Auth flows working end-to-end
+- **Backend**: 100% working (all endpoints tested)
+- **Frontend**: All pages functional with dark mode
+- **Integration**: Auth + Dashboard flows working end-to-end
 
 ## Known Limitations
-- **Stripe**: Uses test/placeholder keys
+- **Stripe**: Uses test/placeholder keys (MOCKED payment flow)
 - **Google Meet**: Placeholder links (no real API integration)
-- **Dashboard Data**: Some components use mock data
+- **Google OAuth**: May show 403 on first use (Emergent Auth needs domain registration)
 
 ## Pending Tasks (P1)
 1. Connect frontend components to live backend APIs (replace mock data)
