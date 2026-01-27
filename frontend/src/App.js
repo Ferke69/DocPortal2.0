@@ -1,52 +1,95 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React, { useState } from 'react';
+import './App.css';
+import LandingPage from './components/LandingPage';
+import ProviderDashboard from './components/ProviderDashboard';
+import ClientPortal from './components/ClientPortal';
+import MessagingCenter from './components/MessagingCenter';
+import AppointmentBooking from './components/AppointmentBooking';
+import BillingPayments from './components/BillingPayments';
+import { Toaster } from './components/ui/toaster';
+import { mockProviders, mockClients } from './mockData';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+function App() {
+  const [currentView, setCurrentView] = useState('landing');
+  const [userType, setUserType] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+  const handleSelectPortal = (portalType) => {
+    setUserType(portalType);
+    // Mock login - in real app, would have actual authentication
+    if (portalType === 'provider') {
+      setCurrentUser(mockProviders[0]);
+      setCurrentView('provider-dashboard');
+    } else {
+      setCurrentUser(mockClients[0]);
+      setCurrentView('client-portal');
     }
   };
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+  const handleNavigate = (view) => {
+    setCurrentView(view);
+  };
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+  const handleBackToDashboard = () => {
+    if (userType === 'provider') {
+      setCurrentView('provider-dashboard');
+    } else {
+      setCurrentView('client-portal');
+    }
+  };
 
-function App() {
+  const renderView = () => {
+    switch (currentView) {
+      case 'landing':
+        return <LandingPage onSelectPortal={handleSelectPortal} />;
+      
+      case 'provider-dashboard':
+        return <ProviderDashboard onNavigate={handleNavigate} />;
+      
+      case 'client-portal':
+        return <ClientPortal onNavigate={handleNavigate} />;
+      
+      case 'messages':
+        return (
+          <MessagingCenter 
+            userType={userType} 
+            userId={currentUser?.id}
+            onBack={handleBackToDashboard}
+          />
+        );
+      
+      case 'book-appointment':
+      case 'calendar':
+        return (
+          <AppointmentBooking 
+            userType={userType}
+            userId={currentUser?.id}
+            onBack={handleBackToDashboard}
+          />
+        );
+      
+      case 'billing':
+        return (
+          <BillingPayments 
+            userType={userType}
+            userId={currentUser?.id}
+            onBack={handleBackToDashboard}
+          />
+        );
+      
+      case 'clients':
+        // In a real app, would have a full clients management page
+        return <ProviderDashboard onNavigate={handleNavigate} />;
+      
+      default:
+        return <LandingPage onSelectPortal={handleSelectPortal} />;
+    }
+  };
+
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      {renderView()}
+      <Toaster />
     </div>
   );
 }
