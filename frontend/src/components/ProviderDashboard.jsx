@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Users, DollarSign, FileText, MessageSquare, Video, Clock, TrendingUp, LogOut } from 'lucide-react';
+import { Calendar, Users, DollarSign, FileText, MessageSquare, Video, Clock, TrendingUp, LogOut, UserPlus, Copy, Check, Trash2, Key } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { providerApi, messagesApi } from '../services/api';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
+import api from '../services/api';
 
 const ProviderDashboard = ({ onNavigate }) => {
   const navigate = useNavigate();
@@ -28,6 +29,13 @@ const ProviderDashboard = ({ onNavigate }) => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Invite code states
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteCodes, setInviteCodes] = useState([]);
+  const [generatingCode, setGeneratingCode] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(null);
+  const [loadingCodes, setLoadingCodes] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -63,6 +71,56 @@ const ProviderDashboard = ({ onNavigate }) => {
     }
   };
 
+  const fetchInviteCodes = async () => {
+    setLoadingCodes(true);
+    try {
+      const response = await api.get('/api/provider/invite-codes');
+      setInviteCodes(response.data || []);
+    } catch (err) {
+      console.error('Error fetching invite codes:', err);
+    } finally {
+      setLoadingCodes(false);
+    }
+  };
+
+  const generateInviteCode = async () => {
+    setGeneratingCode(true);
+    try {
+      const response = await api.post('/api/provider/invite-code', { expiresInDays: 7 });
+      await fetchInviteCodes();
+      // Auto-copy new code
+      copyToClipboard(response.data.code);
+    } catch (err) {
+      console.error('Error generating invite code:', err);
+    } finally {
+      setGeneratingCode(false);
+    }
+  };
+
+  const deleteInviteCode = async (code) => {
+    try {
+      await api.delete(`/api/provider/invite-codes/${code}`);
+      await fetchInviteCodes();
+    } catch (err) {
+      console.error('Error deleting invite code:', err);
+    }
+  };
+
+  const copyToClipboard = async (code) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const openInviteModal = () => {
+    setShowInviteModal(true);
+    fetchInviteCodes();
+  };
+
   const getClientName = (clientId) => {
     const client = clients.find(c => c.user_id === clientId);
     return client ? client.name : 'Unknown Client';
@@ -96,8 +154,119 @@ const ProviderDashboard = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Invite Code Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                  <Key className="h-5 w-5 mr-2 text-blue-600" />
+                  Client Invite Codes
+                </h2>
+                <button 
+                  onClick={() => setShowInviteModal(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                Generate invite codes for new clients to join your practice.
+              </p>
+            </div>
+            
+            <div className="p-6">
+              <Button 
+                onClick={generateInviteCode} 
+                className="w-full bg-blue-600 hover:bg-blue-700 mb-4"
+                disabled={generatingCode}
+              >
+                {generatingCode ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Generate New Invite Code
+                  </>
+                )}
+              </Button>
+              
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {loadingCodes ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+                  </div>
+                ) : inviteCodes.length === 0 ? (
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                    No invite codes yet. Generate one above!
+                  </div>
+                ) : (
+                  inviteCodes.map((invite) => (
+                    <div 
+                      key={invite.code}
+                      className={`p-4 rounded-lg border ${
+                        invite.used 
+                          ? 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600' 
+                          : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="font-mono text-lg font-bold tracking-wider text-gray-900 dark:text-white">
+                          {invite.code}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {!invite.used && (
+                            <>
+                              <button
+                                onClick={() => copyToClipboard(invite.code)}
+                                className="p-2 hover:bg-blue-100 dark:hover:bg-blue-800 rounded-lg transition-colors"
+                                title="Copy code"
+                              >
+                                {copiedCode === invite.code ? (
+                                  <Check className="h-4 w-4 text-green-600" />
+                                ) : (
+                                  <Copy className="h-4 w-4 text-blue-600" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => deleteInviteCode(invite.code)}
+                                className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                title="Delete code"
+                              >
+                                <Trash2 className="h-4 w-4 text-red-600" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                        {invite.used ? (
+                          <span className="text-gray-500">✓ Used</span>
+                        ) : (
+                          <span>Expires: {new Date(invite.expiresAt).toLocaleDateString()}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+            
+            <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                Share invite codes with clients so they can join your practice. Each code can only be used once.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -105,6 +274,15 @@ const ProviderDashboard = ({ onNavigate }) => {
               <Badge variant="secondary" className="text-xs">Provider Portal</Badge>
             </div>
             <div className="flex items-center space-x-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={openInviteModal} 
+                className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Invite Client
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => onNavigate('calendar')} className="dark:text-gray-300">
                 <Calendar className="h-4 w-4 mr-2" />
                 Calendar
@@ -154,6 +332,25 @@ const ProviderDashboard = ({ onNavigate }) => {
           <p className="text-gray-600 dark:text-gray-300">Here's what's happening with your practice today.</p>
         </div>
 
+        {/* Quick Action - Invite Client */}
+        {stats.activeClients === 0 && (
+          <div className="mb-8 p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold mb-2">Get Started: Invite Your First Client</h3>
+                <p className="text-blue-100">Generate an invite code to add clients to your practice.</p>
+              </div>
+              <Button 
+                onClick={openInviteModal}
+                className="bg-white text-blue-600 hover:bg-blue-50"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Generate Invite Code
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
@@ -188,7 +385,13 @@ const ProviderDashboard = ({ onNavigate }) => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.activeClients}</div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Total active clients</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {stats.activeClients === 0 ? (
+                  <span className="text-blue-600 cursor-pointer" onClick={openInviteModal}>+ Invite clients</span>
+                ) : (
+                  'Total active clients'
+                )}
+              </p>
             </CardContent>
           </Card>
 
