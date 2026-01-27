@@ -140,10 +140,10 @@ const LandingPage = () => {
             {t('landing.ctaDescription')}
           </p>
           <div className="flex justify-center space-x-4">
-            <Button size="lg" onClick={() => onSelectPortal('provider')} className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-6">
+            <Button size="lg" onClick={() => navigate('/register')} className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-6">
               {t('landing.startProvider')}
             </Button>
-            <Button size="lg" variant="outline" onClick={() => onSelectPortal('client')} className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6">
+            <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6">
               {t('landing.accessClientPortal')}
             </Button>
           </div>
