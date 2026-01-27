@@ -171,6 +171,7 @@ const Register = () => {
                   type="button" 
                   onClick={handleNext}
                   className="w-full bg-blue-600 hover:bg-blue-700"
+                  data-testid="register-next-btn"
                 >
                   Next
                 </Button>
