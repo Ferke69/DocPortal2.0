@@ -102,6 +102,11 @@ async def update_appointment(
     
     # Build update dict
     update_dict = {k: v for k, v in update.model_dump().items() if v is not None}
+    
+    # Convert date to string for MongoDB storage
+    if isinstance(update_dict.get("date"), date):
+        update_dict["date"] = update_dict["date"].isoformat()
+    
     update_dict["updatedAt"] = datetime.now(timezone.utc)
     
     # Update appointment
