@@ -7,14 +7,20 @@ import { Toaster } from './components/ui/toaster';
 
 // Import components
 import LandingPage from './components/LandingPage';
-import Login from './components/Login';
-import Register from './components/Register';
+import ProviderLogin from './components/ProviderLogin';
+import ClientLogin from './components/ClientLogin';
+import ProviderRegister from './components/ProviderRegister';
+import ClientRegister from './components/ClientRegister';
 import AuthCallback from './components/AuthCallback';
 import ProviderDashboard from './components/ProviderDashboard';
 import ClientPortal from './components/ClientPortal';
 import MessagingCenter from './components/MessagingCenter';
 import AppointmentBooking from './components/AppointmentBooking';
 import BillingPayments from './components/BillingPayments';
+
+// Keep old Login/Register for backward compatibility during transition
+import Login from './components/Login';
+import Register from './components/Register';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredType }) => {
@@ -29,7 +35,11 @@ const ProtectedRoute = ({ children, requiredType }) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    // Redirect to appropriate login based on required type
+    if (requiredType === 'provider') {
+      return <Navigate to="/provider/login" replace />;
+    }
+    return <Navigate to="/client/login" replace />;
   }
 
   if (requiredType && user.userType !== requiredType) {
@@ -39,12 +49,12 @@ const ProtectedRoute = ({ children, requiredType }) => {
   return children;
 };
 
-// Dashboard Router Component
+// Dashboard Router Component - redirects to appropriate dashboard
 const DashboardRouter = () => {
   const { user } = useAuth();
   
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return user.userType === 'provider' 
@@ -73,10 +83,20 @@ function AppRoutes() {
       {/* Public Routes */}
       <Route 
         path="/" 
-        element={user ? <DashboardRouter /> : <LandingPage onSelectPortal={(type) => window.location.href = '/login'} />} 
+        element={user ? <DashboardRouter /> : <LandingPage />} 
       />
-      <Route path="/login" element={user ? <DashboardRouter /> : <Login />} />
-      <Route path="/register" element={user ? <DashboardRouter /> : <Register />} />
+      
+      {/* New Separate Login Routes */}
+      <Route path="/provider/login" element={user ? <DashboardRouter /> : <ProviderLogin />} />
+      <Route path="/client/login" element={user ? <DashboardRouter /> : <ClientLogin />} />
+      <Route path="/provider/register" element={user ? <DashboardRouter /> : <ProviderRegister />} />
+      <Route path="/client/register" element={user ? <DashboardRouter /> : <ClientRegister />} />
+      
+      {/* Legacy routes - redirect to new routes */}
+      <Route path="/login" element={<Navigate to="/provider/login" replace />} />
+      <Route path="/register" element={<Navigate to="/provider/register" replace />} />
+      
+      {/* Dashboard redirect */}
       <Route path="/dashboard" element={<DashboardRouter />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
 
