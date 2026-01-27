@@ -79,7 +79,7 @@ export const messagesApi = {
 // Billing API
 export const billingApi = {
   getInvoices: () => api.get('/billing/invoices'),
-  createPaymentIntent: (invoiceId) => api.post('/billing/create-payment-intent', { invoiceId }),
+  createPaymentIntent: (amount) => api.post('/billing/create-payment-intent', { amount }),
   confirmPayment: (paymentIntentId) => api.post('/billing/confirm-payment', { paymentIntentId })
 };
 
