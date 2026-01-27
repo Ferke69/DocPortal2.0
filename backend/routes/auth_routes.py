@@ -264,13 +264,29 @@ async def logout(response: Response):
     return {"message": "Logged out successfully"}
 
 
-
-@router.get("/users/providers")
-async def get_all_providers():
-    """Get all providers for appointment booking"""
-    providers = await users_collection.find(
-        {"userType": "provider"},
-        {"_id": 0, "password": 0}  # Exclude _id and password
-    ).to_list(100)
+@router.get("/validate-invite/{code}")
+async def validate_invite_code_endpoint(code: str):
+    """Validate an invite code and return provider info"""
+    invite, error = await validate_invite_code(code)
     
-    return providers
+    if error:
+        raise HTTPException(status_code=400, detail=error)
+    
+    # Get provider info
+    provider = await users_collection.find_one(
+        {"user_id": invite["providerId"]},
+        {"_id": 0, "password": 0, "email": 0}
+    )
+    
+    if not provider:
+        raise HTTPException(status_code=400, detail="Provider not found")
+    
+    return {
+        "valid": True,
+        "provider": {
+            "name": provider.get("name"),
+            "specialty": provider.get("specialty"),
+            "avatar": provider.get("avatar")
+        },
+        "expiresAt": invite["expiresAt"].isoformat()
+    }
