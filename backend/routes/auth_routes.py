@@ -22,8 +22,13 @@ async def validate_invite_code(code: str):
     if invite.get("used"):
         return None, "This invite code has already been used"
     
-    if datetime.now(timezone.utc) > invite.get("expiresAt"):
-        return None, "This invite code has expired"
+    expires_at = invite.get("expiresAt")
+    if expires_at:
+        # Ensure both datetimes are timezone-aware for comparison
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if datetime.now(timezone.utc) > expires_at:
+            return None, "This invite code has expired"
     
     return invite, None
 
