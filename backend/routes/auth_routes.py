@@ -208,11 +208,7 @@ async def get_all_providers():
     """Get all providers for appointment booking"""
     providers = await users_collection.find(
         {"userType": "provider"},
-        {"hashed_password": 0}  # Exclude password
+        {"_id": 0, "password": 0}  # Exclude _id and password
     ).to_list(100)
-    
-    # Convert ObjectId to string
-    for provider in providers:
-        provider["_id"] = str(provider["_id"])
     
     return providers
