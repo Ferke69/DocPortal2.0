@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
 import { AlertCircle } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
+import ThemeToggle from './ThemeToggle';
 import { useTranslation } from 'react-i18next';
 
 const Login = () => {
