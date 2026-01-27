@@ -97,7 +97,7 @@ const ProviderDashboard = ({ onNavigate }) => {
   const fetchInviteCodes = async () => {
     setLoadingCodes(true);
     try {
-      const response = await api.get('/api/provider/invite-codes');
+      const response = await api.get('/provider/invite-codes');
       setInviteCodes(response.data || []);
     } catch (err) {
       console.error('Error fetching invite codes:', err);
