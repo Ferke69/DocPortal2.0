@@ -208,6 +208,7 @@ class LoginRequest(BaseModel):
 
 class GoogleAuthRequest(BaseModel):
     googleToken: str
+    userType: str = 'client'  # Default to client if not specified
 
 # Dashboard Stats
 class ProviderDashboardStats(BaseModel):
