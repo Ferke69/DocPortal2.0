@@ -29,7 +29,7 @@ db = client[os.environ.get('DB_NAME', 'simplepractice')]
 
 # Create the main app without a prefix
 app = FastAPI(
-    title="SimplePractice API",
+    title="DocPortal API",
     description="HIPAA-compliant practice management platform",
     version="1.0.0"
 )
