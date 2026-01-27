@@ -28,20 +28,19 @@ const LandingPage = ({ onSelectPortal }) => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Practice Management
-            <span className="block text-blue-600 mt-2">Made Simple</span>
+            {t('landing.title')}
+            <span className="block text-blue-600 mt-2">{t('landing.subtitle')}</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            The all-in-one platform for mental health professionals. Manage your practice, 
-            connect with clients, and deliver care—all from your mobile device.
+            {t('landing.description')}
           </p>
           <div className="flex justify-center space-x-4">
             <Button size="lg" onClick={() => onSelectPortal('provider')} className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
-              Get Started as Provider
+              {t('landing.getStartedProvider')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => onSelectPortal('client')} className="text-lg px-8 py-6">
-              Access Client Portal
+              {t('landing.accessClientPortal')}
             </Button>
           </div>
         </div>
@@ -51,8 +50,8 @@ const LandingPage = ({ onSelectPortal }) => {
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Everything You Need in One Place</h2>
-            <p className="text-xl text-gray-600">HIPAA-compliant tools designed for modern healthcare practices</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('landing.featuresTitle')}</h2>
+            <p className="text-xl text-gray-600">{t('landing.featuresSubtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -61,9 +60,9 @@ const LandingPage = ({ onSelectPortal }) => {
                 <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Calendar className="h-6 w-6 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Scheduling</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.scheduling')}</h3>
                 <p className="text-gray-600">
-                  Clients book appointments 24/7 with automatic reminders and calendar sync. Never miss a session.
+                  {t('features.schedulingDesc')}
                 </p>
               </CardContent>
             </Card>
@@ -73,9 +72,9 @@ const LandingPage = ({ onSelectPortal }) => {
                 <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                   <Video className="h-6 w-6 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Secure Telehealth</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.telehealth')}</h3>
                 <p className="text-gray-600">
-                  HIPAA-compliant video sessions with one-tap access. No downloads required for clients.
+                  {t('features.telehealthDesc')}
                 </p>
               </CardContent>
             </Card>
@@ -85,9 +84,9 @@ const LandingPage = ({ onSelectPortal }) => {
                 <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                   <Shield className="h-6 w-6 text-purple-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">HIPAA Compliance</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.compliance')}</h3>
                 <p className="text-gray-600">
-                  Bank-level encryption, audit logs, and secure data storage. Your practice stays protected.
+                  {t('features.complianceDesc')}
                 </p>
               </CardContent>
             </Card>
@@ -97,9 +96,9 @@ const LandingPage = ({ onSelectPortal }) => {
                 <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
                   <Clock className="h-6 w-6 text-orange-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Automated Billing</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.billing')}</h3>
                 <p className="text-gray-600">
-                  Stripe-integrated payments with automatic invoicing. Get paid faster and easier.
+                  {t('features.billingDesc')}
                 </p>
               </CardContent>
             </Card>
@@ -109,9 +108,9 @@ const LandingPage = ({ onSelectPortal }) => {
                 <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-red-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Client Portal</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.clientPortal')}</h3>
                 <p className="text-gray-600">
-                  Dedicated mobile app for clients. Book, pay, message, and join sessions—all in one place.
+                  {t('features.clientPortalDesc')}
                 </p>
               </CardContent>
             </Card>
@@ -121,9 +120,9 @@ const LandingPage = ({ onSelectPortal }) => {
                 <div className="h-12 w-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
                   <CheckCircle className="h-6 w-6 text-teal-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Clinical Notes</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.clinicalNotes')}</h3>
                 <p className="text-gray-600">
-                  SOAP, DAP, and custom templates. Document sessions quickly with pre-built formats.
+                  {t('features.clinicalNotesDesc')}
                 </p>
               </CardContent>
             </Card>
@@ -134,16 +133,16 @@ const LandingPage = ({ onSelectPortal }) => {
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-blue-600 to-green-600 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">Ready to Simplify Your Practice?</h2>
+          <h2 className="text-4xl font-bold text-white mb-4">{t('landing.ctaTitle')}</h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join thousands of mental health professionals who trust SimplePractice
+            {t('landing.ctaDescription')}
           </p>
           <div className="flex justify-center space-x-4">
             <Button size="lg" onClick={() => onSelectPortal('provider')} className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-6">
-              Start as Provider
+              {t('landing.startProvider')}
             </Button>
             <Button size="lg" variant="outline" onClick={() => onSelectPortal('client')} className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6">
-              Access Client Portal
+              {t('landing.accessClientPortal')}
             </Button>
           </div>
         </div>
@@ -154,7 +153,7 @@ const LandingPage = ({ onSelectPortal }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="text-2xl font-bold text-white mb-4">SimplePractice</div>
-            <p className="mb-4">HIPAA-compliant practice management for mental health professionals</p>
+            <p className="mb-4">{t('landing.footer')}</p>
             <div className="flex justify-center space-x-6 text-sm">
               <a href="#" className="hover:text-white transition-colors duration-200">Privacy Policy</a>
               <a href="#" className="hover:text-white transition-colors duration-200">Terms of Service</a>
