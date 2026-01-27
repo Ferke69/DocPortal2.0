@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Toaster } from './components/ui/toaster';
@@ -51,6 +51,19 @@ const DashboardRouter = () => {
     ? <Navigate to="/provider/dashboard" replace />
     : <Navigate to="/client/dashboard" replace />;
 };
+
+// AppRouter - Detects session_id synchronously during render (prevents race conditions)
+function AppRouter() {
+  const location = useLocation();
+  
+  // CRITICAL: Check URL fragment for session_id synchronously during render
+  // This must happen BEFORE useEffect runs to prevent race conditions
+  if (location.hash?.includes('session_id=')) {
+    return <AuthCallback />;
+  }
+  
+  return <AppRoutes />;
+}
 
 function AppRoutes() {
   const { user } = useAuth();
