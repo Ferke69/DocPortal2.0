@@ -47,7 +47,7 @@ const ClientRegister = () => {
 
     setValidatingCode(true);
     try {
-      const response = await api.get(`/api/auth/validate-invite/${code}`);
+      const response = await api.get(`/auth/validate-invite/${code}`);
       setInviteValid(true);
       setProviderInfo(response.data.provider);
       setError('');
