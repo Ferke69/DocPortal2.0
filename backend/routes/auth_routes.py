@@ -120,21 +120,31 @@ async def google_auth(auth_request: GoogleAuthRequest, response: Response):
             user_id = existing_user["user_id"]
             user_type = existing_user["userType"]
         else:
-            # Create new user - default to client type
+            # Create new user with the specified user type
             user_id = f"user_{uuid.uuid4().hex[:12]}"
             user_doc = {
                 "user_id": user_id,
                 "email": user_data["email"],
                 "name": user_data.get("name", "User"),
                 "avatar": user_data.get("picture"),
-                "userType": "client",  # Default to client
+                "userType": auth_request.userType,  # Use the userType from request
                 "phone": None,
                 "password": get_password_hash(str(uuid.uuid4())),  # Random password for OAuth users
                 "createdAt": datetime.now(timezone.utc),
                 "updatedAt": datetime.now(timezone.utc)
             }
+            
+            # Add provider-specific fields if userType is provider
+            if auth_request.userType == "provider":
+                user_doc.update({
+                    "specialty": None,
+                    "license": None,
+                    "bio": None,
+                    "hourlyRate": None
+                })
+            
             await users_collection.insert_one(user_doc)
-            user_type = "client"
+            user_type = auth_request.userType
         
         # Create JWT token
         token = create_access_token({
@@ -160,7 +170,7 @@ async def google_auth(auth_request: GoogleAuthRequest, response: Response):
             {"_id": 0, "password": 0}
         )
         
-        await log_audit(user_id, "view", "user", user_id, {"action": "google_login"})
+        await log_audit(user_id, "view", "user", user_id, {"action": "google_login", "userType": user_type})
         
         return {
             "token": token,
