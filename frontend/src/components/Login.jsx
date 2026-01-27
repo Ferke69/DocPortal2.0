@@ -47,7 +47,8 @@ const Login = () => {
     sessionStorage.setItem('intended_user_type', userType);
     
     // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
-    const redirectUrl = window.location.origin + '/auth/callback';
+    // Redirect to dashboard - the AppRouter will detect session_id and handle it
+    const redirectUrl = window.location.origin + '/dashboard';
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
