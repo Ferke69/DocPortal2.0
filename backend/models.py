@@ -147,7 +147,7 @@ class InvoiceCreate(InvoiceBase):
 class InvoiceInDB(InvoiceBase):
     id: str = Field(alias="_id")
     appointmentId: Optional[str] = None
-    date: date = Field(default_factory=date.today)
+    invoiceDate: date = Field(default_factory=date.today)
     status: Literal['pending', 'paid', 'overdue'] = 'pending'
     paymentMethod: Optional[str] = None
     transactionId: Optional[str] = None
