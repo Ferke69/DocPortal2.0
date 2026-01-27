@@ -50,6 +50,11 @@ async def init_db():
     await audit_logs_collection.create_index([("userId", 1), ("timestamp", -1)])
     await audit_logs_collection.create_index("action")
     
+    # Invite Codes
+    await invite_codes_collection.create_index("code", unique=True)
+    await invite_codes_collection.create_index("providerId")
+    await invite_codes_collection.create_index("expiresAt")
+    
     print("✓ Database indexes created")
 
 async def log_audit(user_id: str, action: str, resource_type: str, resource_id: str, details: dict = None):
