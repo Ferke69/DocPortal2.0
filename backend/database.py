@@ -20,6 +20,7 @@ messages_collection = db['messages']
 invoices_collection = db['invoices']
 clinical_notes_collection = db['clinical_notes']
 audit_logs_collection = db['audit_logs']
+invite_codes_collection = db['invite_codes']
 
 async def init_db():
     """Initialize database indexes for performance and uniqueness"""
