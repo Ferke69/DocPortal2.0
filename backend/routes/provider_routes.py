@@ -1,12 +1,100 @@
 from fastapi import APIRouter, HTTPException, Depends
 from auth import get_current_provider
-from database import users_collection, appointments_collection, messages_collection, invoices_collection, clinical_notes_collection, log_audit
-from models import ProviderDashboardStats, ClinicalNoteCreate, ClinicalNoteInDB
-from datetime import datetime, date, timezone
+from database import users_collection, appointments_collection, messages_collection, invoices_collection, clinical_notes_collection, invite_codes_collection, log_audit
+from models import ProviderDashboardStats, ClinicalNoteCreate, ClinicalNoteInDB, InviteCodeCreate
+from datetime import datetime, date, timezone, timedelta
 from bson import ObjectId
 import uuid
+import secrets
+import string
 
 router = APIRouter(prefix="/provider", tags=["Provider"])
+
+def generate_invite_code():
+    """Generate a random 8-character invite code"""
+    # Use uppercase letters and digits, excluding confusing characters (0, O, I, L)
+    chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+    return ''.join(secrets.choice(chars) for _ in range(8))
+
+@router.post("/invite-code")
+async def create_invite_code(
+    code_request: InviteCodeCreate = InviteCodeCreate(),
+    current_user: dict = Depends(get_current_provider)
+):
+    """Generate a new invite code for clients to join"""
+    provider_id = current_user["userId"]
+    
+    # Get provider info
+    provider = await users_collection.find_one({"user_id": provider_id})
+    if not provider:
+        raise HTTPException(status_code=404, detail="Provider not found")
+    
+    # Generate unique code
+    code = generate_invite_code()
+    
+    # Ensure code is unique
+    while await invite_codes_collection.find_one({"code": code}):
+        code = generate_invite_code()
+    
+    # Create invite code document
+    invite_doc = {
+        "code": code,
+        "providerId": provider_id,
+        "providerName": provider.get("name", "Provider"),
+        "createdAt": datetime.now(timezone.utc),
+        "expiresAt": datetime.now(timezone.utc) + timedelta(days=code_request.expiresInDays),
+        "used": False,
+        "usedBy": None,
+        "usedAt": None
+    }
+    
+    await invite_codes_collection.insert_one(invite_doc)
+    await log_audit(provider_id, "create", "invite_code", code)
+    
+    return {
+        "code": code,
+        "expiresAt": invite_doc["expiresAt"].isoformat(),
+        "expiresInDays": code_request.expiresInDays
+    }
+
+@router.get("/invite-codes")
+async def get_invite_codes(current_user: dict = Depends(get_current_provider)):
+    """Get all invite codes created by the provider"""
+    provider_id = current_user["userId"]
+    
+    codes = await invite_codes_collection.find(
+        {"providerId": provider_id},
+        {"_id": 0}
+    ).sort("createdAt", -1).to_list(50)
+    
+    # Convert datetime objects to ISO format strings
+    for code in codes:
+        if "createdAt" in code:
+            code["createdAt"] = code["createdAt"].isoformat()
+        if "expiresAt" in code:
+            code["expiresAt"] = code["expiresAt"].isoformat()
+        if "usedAt" in code and code["usedAt"]:
+            code["usedAt"] = code["usedAt"].isoformat()
+    
+    return codes
+
+@router.delete("/invite-codes/{code}")
+async def delete_invite_code(code: str, current_user: dict = Depends(get_current_provider)):
+    """Delete an unused invite code"""
+    provider_id = current_user["userId"]
+    
+    invite = await invite_codes_collection.find_one({"code": code, "providerId": provider_id})
+    
+    if not invite:
+        raise HTTPException(status_code=404, detail="Invite code not found")
+    
+    if invite.get("used"):
+        raise HTTPException(status_code=400, detail="Cannot delete a used invite code")
+    
+    await invite_codes_collection.delete_one({"code": code})
+    await log_audit(provider_id, "delete", "invite_code", code)
+    
+    return {"message": "Invite code deleted successfully"}
 
 @router.get("/dashboard", response_model=ProviderDashboardStats)
 async def get_dashboard(current_user: dict = Depends(get_current_provider)):
