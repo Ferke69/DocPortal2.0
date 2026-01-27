@@ -157,6 +157,25 @@ async def google_auth(auth_request: GoogleAuthRequest, response: Response):
             user_id = existing_user["user_id"]
             user_type = existing_user["userType"]
         else:
+            # New user registration
+            # For clients, validate invite code
+            provider_id = None
+            if auth_request.userType == "client":
+                if not auth_request.inviteCode:
+                    raise HTTPException(status_code=400, detail="Invite code is required for client registration")
+                
+                invite, error = await validate_invite_code(auth_request.inviteCode)
+                if error:
+                    raise HTTPException(status_code=400, detail=error)
+                
+                provider_id = invite["providerId"]
+                
+                # Mark invite code as used
+                await invite_codes_collection.update_one(
+                    {"code": auth_request.inviteCode},
+                    {"$set": {"used": True, "usedAt": datetime.now(timezone.utc)}}
+                )
+            
             # Create new user with the specified user type
             user_id = f"user_{uuid.uuid4().hex[:12]}"
             user_doc = {
@@ -164,7 +183,7 @@ async def google_auth(auth_request: GoogleAuthRequest, response: Response):
                 "email": user_data["email"],
                 "name": user_data.get("name", "User"),
                 "avatar": user_data.get("picture"),
-                "userType": auth_request.userType,  # Use the userType from request
+                "userType": auth_request.userType,
                 "phone": None,
                 "password": get_password_hash(str(uuid.uuid4())),  # Random password for OAuth users
                 "createdAt": datetime.now(timezone.utc),
@@ -179,6 +198,10 @@ async def google_auth(auth_request: GoogleAuthRequest, response: Response):
                     "bio": None,
                     "hourlyRate": None
                 })
+            
+            # Add providerId for clients
+            if auth_request.userType == "client" and provider_id:
+                user_doc["providerId"] = provider_id
             
             await users_collection.insert_one(user_doc)
             user_type = auth_request.userType
@@ -216,6 +239,8 @@ async def google_auth(auth_request: GoogleAuthRequest, response: Response):
         
     except httpx.TimeoutException:
         raise HTTPException(status_code=504, detail="Auth service timeout")
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Authentication failed: {str(e)}")
 
