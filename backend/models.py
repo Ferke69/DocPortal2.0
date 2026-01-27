@@ -209,6 +209,20 @@ class LoginRequest(BaseModel):
 class GoogleAuthRequest(BaseModel):
     googleToken: str
     userType: str = 'client'  # Default to client if not specified
+    inviteCode: Optional[str] = None  # Required for client registration
+
+# Invite Code Models
+class InviteCodeCreate(BaseModel):
+    expiresInDays: int = 7  # Default 7 days validity
+
+class InviteCodeResponse(BaseModel):
+    code: str
+    providerId: str
+    providerName: str
+    createdAt: datetime
+    expiresAt: datetime
+    used: bool = False
+    usedBy: Optional[str] = None
 
 # Dashboard Stats
 class ProviderDashboardStats(BaseModel):
