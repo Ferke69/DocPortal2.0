@@ -52,16 +52,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      <div className="absolute top-4 right-4 flex items-center space-x-2">
+        <ThemeToggle />
         <LanguageSelector />
       </div>
       
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md dark:bg-gray-800 dark:border-gray-700">
         <CardHeader className="text-center">
-          <div className="text-3xl font-bold text-blue-600 mb-2">DocPortal</div>
-          <CardTitle className="text-2xl">Sign In</CardTitle>
-          <p className="text-gray-600 text-sm mt-2">
+          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">DocPortal</div>
+          <CardTitle className="text-2xl dark:text-white">Sign In</CardTitle>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
             Sign in to manage your practice or access your client portal
           </p>
         </CardHeader>
