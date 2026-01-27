@@ -87,7 +87,7 @@ export const billingApi = {
 export const usersApi = {
   getMe: () => api.get('/auth/me'),
   updateProfile: (data) => api.patch('/auth/profile', data),
-  getProviders: () => api.get('/users/providers')
+  getProviders: () => api.get('/auth/users/providers')
 };
 
 export default api;
