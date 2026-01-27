@@ -82,12 +82,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async (sessionId, userType = 'client') => {
+  const loginWithGoogle = async (sessionId, userType = 'client', inviteCode = null) => {
     try {
-      const response = await axios.post(`${API}/auth/google`, { 
+      const payload = { 
         googleToken: sessionId,
         userType: userType
-      });
+      };
+      
+      // Add invite code for client registration
+      if (userType === 'client' && inviteCode) {
+        payload.inviteCode = inviteCode;
+      }
+      
+      const response = await axios.post(`${API}/auth/google`, payload);
       const { token: newToken, user: userData } = response.data;
       
       localStorage.setItem('token', newToken);
