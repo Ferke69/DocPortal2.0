@@ -82,10 +82,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async (sessionId) => {
+  const loginWithGoogle = async (sessionId, userType = 'client') => {
     try {
       const response = await axios.post(`${API}/auth/google`, { 
-        googleToken: sessionId 
+        googleToken: sessionId,
+        userType: userType
       });
       const { token: newToken, user: userData } = response.data;
       
