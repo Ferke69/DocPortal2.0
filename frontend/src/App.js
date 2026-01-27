@@ -1,96 +1,174 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Toaster } from './components/ui/toaster';
+
+// Import components
 import LandingPage from './components/LandingPage';
+import Login from './components/Login';
+import Register from './components/Register';
+import AuthCallback from './components/AuthCallback';
 import ProviderDashboard from './components/ProviderDashboard';
 import ClientPortal from './components/ClientPortal';
 import MessagingCenter from './components/MessagingCenter';
 import AppointmentBooking from './components/AppointmentBooking';
 import BillingPayments from './components/BillingPayments';
-import { Toaster } from './components/ui/toaster';
-import { mockProviders, mockClients } from './mockData';
 
-function App() {
-  const [currentView, setCurrentView] = useState('landing');
-  const [userType, setUserType] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+// Protected Route Component
+const ProtectedRoute = ({ children, requiredType }) => {
+  const { user, loading } = useAuth();
 
-  const handleSelectPortal = (portalType) => {
-    setUserType(portalType);
-    // Mock login - in real app, would have actual authentication
-    if (portalType === 'provider') {
-      setCurrentUser(mockProviders[0]);
-      setCurrentView('provider-dashboard');
-    } else {
-      setCurrentUser(mockClients[0]);
-      setCurrentView('client-portal');
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      </div>
+    );
+  }
 
-  const handleNavigate = (view) => {
-    setCurrentView(view);
-  };
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-  const handleBackToDashboard = () => {
-    if (userType === 'provider') {
-      setCurrentView('provider-dashboard');
-    } else {
-      setCurrentView('client-portal');
-    }
-  };
+  if (requiredType && user.userType !== requiredType) {
+    return <Navigate to={user.userType === 'provider' ? '/provider/dashboard' : '/client/dashboard'} replace />;
+  }
 
-  const renderView = () => {
-    switch (currentView) {
-      case 'landing':
-        return <LandingPage onSelectPortal={handleSelectPortal} />;
-      
-      case 'provider-dashboard':
-        return <ProviderDashboard onNavigate={handleNavigate} />;
-      
-      case 'client-portal':
-        return <ClientPortal onNavigate={handleNavigate} />;
-      
-      case 'messages':
-        return (
-          <MessagingCenter 
-            userType={userType} 
-            userId={currentUser?.id}
-            onBack={handleBackToDashboard}
-          />
-        );
-      
-      case 'book-appointment':
-      case 'calendar':
-        return (
-          <AppointmentBooking 
-            userType={userType}
-            userId={currentUser?.id}
-            onBack={handleBackToDashboard}
-          />
-        );
-      
-      case 'billing':
-        return (
-          <BillingPayments 
-            userType={userType}
-            userId={currentUser?.id}
-            onBack={handleBackToDashboard}
-          />
-        );
-      
-      case 'clients':
-        // In a real app, would have a full clients management page
-        return <ProviderDashboard onNavigate={handleNavigate} />;
-      
-      default:
-        return <LandingPage onSelectPortal={handleSelectPortal} />;
-    }
-  };
+  return children;
+};
+
+// Dashboard Router Component
+const DashboardRouter = () => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return user.userType === 'provider' 
+    ? <Navigate to="/provider/dashboard" replace />
+    : <Navigate to="/client/dashboard" replace />;
+};
+
+function AppRoutes() {
+  const { user } = useAuth();
 
   return (
-    <div className="App">
-      {renderView()}
-      <Toaster />
-    </div>
+    <Routes>
+      {/* Public Routes */}
+      <Route 
+        path="/" 
+        element={user ? <DashboardRouter /> : <LandingPage onSelectPortal={(type) => window.location.href = '/login'} />} 
+      />
+      <Route path="/login" element={user ? <DashboardRouter /> : <Login />} />
+      <Route path="/register" element={user ? <DashboardRouter /> : <Register />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
+
+      {/* Provider Routes */}
+      <Route 
+        path="/provider/dashboard" 
+        element={
+          <ProtectedRoute requiredType="provider">
+            <ProviderDashboard onNavigate={(path) => window.location.href = `/provider/${path}`} />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/provider/clients" 
+        element={
+          <ProtectedRoute requiredType="provider">
+            <ProviderDashboard onNavigate={(path) => window.location.href = `/provider/${path}`} />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/provider/calendar" 
+        element={
+          <ProtectedRoute requiredType="provider">
+            <AppointmentBooking 
+              userType="provider" 
+              userId={user?.user_id}
+              onBack={() => window.location.href = '/provider/dashboard'} 
+            />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/provider/messages" 
+        element={
+          <ProtectedRoute requiredType="provider">
+            <MessagingCenter 
+              userType="provider" 
+              userId={user?.user_id}
+              onBack={() => window.location.href = '/provider/dashboard'} 
+            />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Client Routes */}
+      <Route 
+        path="/client/dashboard" 
+        element={
+          <ProtectedRoute requiredType="client">
+            <ClientPortal onNavigate={(path) => window.location.href = `/client/${path}`} />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/client/book-appointment" 
+        element={
+          <ProtectedRoute requiredType="client">
+            <AppointmentBooking 
+              userType="client" 
+              userId={user?.user_id}
+              onBack={() => window.location.href = '/client/dashboard'} 
+            />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/client/messages" 
+        element={
+          <ProtectedRoute requiredType="client">
+            <MessagingCenter 
+              userType="client" 
+              userId={user?.user_id}
+              onBack={() => window.location.href = '/client/dashboard'} 
+            />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/client/billing" 
+        element={
+          <ProtectedRoute requiredType="client">
+            <BillingPayments 
+              userType="client" 
+              userId={user?.user_id}
+              onBack={() => window.location.href = '/client/dashboard'} 
+            />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Catch all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="App">
+          <AppRoutes />
+          <Toaster />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
