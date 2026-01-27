@@ -57,7 +57,7 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 - **Google OAuth**: May show 403 on first use (Emergent Auth needs domain registration)
 
 ## Pending Tasks (P1)
-1. Connect frontend components to live backend APIs (replace mock data)
+1. Connect remaining components (MessagingCenter, AppointmentBooking, BillingPayments) to live APIs
 2. Full EHR/Notes UI implementation
 3. Real video call integration
 
@@ -68,9 +68,11 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 
 ## Test Credentials
 - **Client**: testclient_1769486748@example.com / TestPass123!
+- **Provider**: testprovider@example.com / TestPass123!
 - **API URL**: https://careflow-166.preview.emergentagent.com
 
 ## Key Files
+- `/app/frontend/src/services/api.js` - Centralized API service
 - `/app/frontend/src/components/` - React components
 - `/app/backend/routes/` - FastAPI route handlers
 - `/app/backend/models.py` - Pydantic models
