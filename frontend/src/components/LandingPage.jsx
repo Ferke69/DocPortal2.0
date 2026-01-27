@@ -59,73 +59,73 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-6">
-                <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <Calendar className="h-6 w-6 text-blue-600" />
+                <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-4">
+                  <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.scheduling')}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('features.scheduling')}</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   {t('features.schedulingDesc')}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-6">
-                <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                  <Video className="h-6 w-6 text-green-600" />
+                <div className="h-12 w-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-4">
+                  <Video className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.telehealth')}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('features.telehealth')}</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   {t('features.telehealthDesc')}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-6">
-                <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-purple-600" />
+                <div className="h-12 w-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.compliance')}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('features.compliance')}</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   {t('features.complianceDesc')}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-6">
-                <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                  <Clock className="h-6 w-6 text-orange-600" />
+                <div className="h-12 w-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mb-4">
+                  <Clock className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.billing')}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('features.billing')}</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   {t('features.billingDesc')}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-6">
-                <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-red-600" />
+                <div className="h-12 w-12 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.clientPortal')}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('features.clientPortal')}</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   {t('features.clientPortalDesc')}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-6">
-                <div className="h-12 w-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
-                  <CheckCircle className="h-6 w-6 text-teal-600" />
+                <div className="h-12 w-12 bg-teal-100 dark:bg-teal-900 rounded-lg flex items-center justify-center mb-4">
+                  <CheckCircle className="h-6 w-6 text-teal-600 dark:text-teal-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('features.clinicalNotes')}</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('features.clinicalNotes')}</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   {t('features.clinicalNotesDesc')}
                 </p>
               </CardContent>
