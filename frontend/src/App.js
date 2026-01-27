@@ -180,7 +180,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <div className="App">
-            <AppRoutes />
+            <AppRouter />
             <Toaster />
           </div>
         </BrowserRouter>
