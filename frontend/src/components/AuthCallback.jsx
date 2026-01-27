@@ -26,8 +26,12 @@ const AuthCallback = () => {
           return;
         }
 
+        // Get intended user type from sessionStorage
+        const intendedUserType = sessionStorage.getItem('intended_user_type') || 'client';
+        sessionStorage.removeItem('intended_user_type'); // Clean up
+
         // Exchange session_id for user data
-        const result = await loginWithGoogle(sessionId);
+        const result = await loginWithGoogle(sessionId, intendedUserType);
 
         if (result.success) {
           // Navigate based on user type
