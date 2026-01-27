@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCard, ArrowLeft, Download, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { mockInvoices, mockClients, mockProviders } from '../mockData';
+import { useAuth } from '../contexts/AuthContext';
+import { billingApi } from '../services/api';
 import { toast } from '../hooks/use-toast';
+import ThemeToggle from './ThemeToggle';
 
 const BillingPayments = ({ userType, userId, onBack }) => {
+  const { user } = useAuth();
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState({
     cardNumber: '',
     cardName: '',
@@ -17,20 +23,37 @@ const BillingPayments = ({ userType, userId, onBack }) => {
     cvv: ''
   });
 
-  const userInvoices = userType === 'client' 
-    ? mockInvoices.filter(inv => inv.clientId === userId)
-    : mockInvoices.filter(inv => inv.providerId === userId);
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
+
+  const fetchInvoices = async () => {
+    try {
+      setLoading(true);
+      const response = await billingApi.getInvoices();
+      setInvoices(response.data || []);
+    } catch (err) {
+      console.error('Error fetching invoices:', err);
+      toast({
+        title: "Error",
+        description: "Failed to load invoices",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'paid':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300';
       case 'overdue':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
@@ -47,23 +70,44 @@ const BillingPayments = ({ userType, userId, onBack }) => {
     }
   };
 
-  const handlePayment = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
     
-    // Simulate Stripe payment processing
-    toast({
-      title: "Payment Successful!",
-      description: `Payment of $${selectedInvoice.amount} processed successfully.`,
-    });
+    if (!selectedInvoice) return;
 
-    setShowPaymentForm(false);
-    setSelectedInvoice(null);
-    setPaymentDetails({
-      cardNumber: '',
-      cardName: '',
-      expiry: '',
-      cvv: ''
-    });
+    try {
+      setProcessing(true);
+      
+      // In a real app, you'd use Stripe Elements here
+      // For now, we'll simulate a payment
+      await billingApi.createPaymentIntent(selectedInvoice.amount);
+      
+      toast({
+        title: "Payment Successful!",
+        description: `Payment of $${selectedInvoice.amount} processed successfully. (DEMO MODE)`,
+      });
+
+      // Refresh invoices
+      await fetchInvoices();
+
+      setShowPaymentForm(false);
+      setSelectedInvoice(null);
+      setPaymentDetails({
+        cardNumber: '',
+        cardName: '',
+        expiry: '',
+        cvv: ''
+      });
+    } catch (err) {
+      console.error('Payment error:', err);
+      toast({
+        title: "Payment Failed",
+        description: err.response?.data?.detail || "Failed to process payment",
+        variant: "destructive"
+      });
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const handlePayNow = (invoice) => {
@@ -71,56 +115,67 @@ const BillingPayments = ({ userType, userId, onBack }) => {
     setShowPaymentForm(true);
   };
 
-  const totalPaid = userInvoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0);
-  const totalPending = userInvoices.filter(inv => inv.status !== 'paid').reduce((sum, inv) => sum + inv.amount, 0);
-  const totalOverdue = userInvoices.filter(inv => inv.status === 'overdue').reduce((sum, inv) => sum + inv.amount, 0);
+  const totalPaid = invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0);
+  const totalPending = invoices.filter(inv => inv.status !== 'paid').reduce((sum, inv) => sum + inv.amount, 0);
+  const totalOverdue = invoices.filter(inv => inv.status === 'overdue').reduce((sum, inv) => sum + inv.amount, 0);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="mb-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-          <h1 className="text-3xl font-bold text-gray-900">Billing & Payments</h1>
-          <p className="text-gray-600 mt-1">Manage invoices and payment methods</p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <Button variant="ghost" onClick={onBack} className="mb-4 dark:text-gray-300">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Billing & Payments</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage invoices and payment methods</p>
+          </div>
+          <ThemeToggle />
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Paid</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Paid</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-green-600">${totalPaid.toLocaleString()}</div>
-              <p className="text-xs text-gray-500 mt-2">
-                {userInvoices.filter(inv => inv.status === 'paid').length} paid invoices
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                {invoices.filter(inv => inv.status === 'paid').length} paid invoices
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">Pending Payments</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Payments</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-yellow-600">${totalPending.toLocaleString()}</div>
-              <p className="text-xs text-gray-500 mt-2">
-                {userInvoices.filter(inv => inv.status === 'pending').length} pending invoices
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                {invoices.filter(inv => inv.status === 'pending').length} pending invoices
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">Overdue</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Overdue</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-red-600">${totalOverdue.toLocaleString()}</div>
-              <p className="text-xs text-gray-500 mt-2">
-                {userInvoices.filter(inv => inv.status === 'overdue').length} overdue invoices
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                {invoices.filter(inv => inv.status === 'overdue').length} overdue invoices
               </p>
             </CardContent>
           </Card>
@@ -128,62 +183,53 @@ const BillingPayments = ({ userType, userId, onBack }) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Invoices List */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
-              <CardTitle>Invoices</CardTitle>
+              <CardTitle className="dark:text-white">Invoices</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {userInvoices.map((invoice) => {
-                  const otherUser = userType === 'client'
-                    ? mockProviders.find(p => p.id === invoice.providerId)
-                    : mockClients.find(c => c.id === invoice.clientId);
-
-                  return (
-                    <div key={invoice.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <div className="font-semibold text-gray-900">Invoice #{invoice.id}</div>
-                            <Badge className={getStatusColor(invoice.status)}>
-                              {getStatusIcon(invoice.status)}
-                              <span className="ml-1 capitalize">{invoice.status}</span>
-                            </Badge>
-                          </div>
-                          <div className="text-sm text-gray-600 mb-1">{invoice.description}</div>
-                          <div className="text-sm text-gray-500">
-                            {userType === 'client' ? otherUser?.name : `Client: ${otherUser?.name}`}
-                          </div>
-                          <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                            <span>Date: {invoice.date}</span>
-                            <span>Due: {invoice.dueDate}</span>
-                          </div>
+                {invoices.map((invoice) => (
+                  <div key={invoice._id || invoice.id} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <div className="font-semibold text-gray-900 dark:text-white">Invoice #{(invoice._id || invoice.id).slice(-8)}</div>
+                          <Badge className={getStatusColor(invoice.status)}>
+                            {getStatusIcon(invoice.status)}
+                            <span className="ml-1 capitalize">{invoice.status}</span>
+                          </Badge>
                         </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-gray-900">${invoice.amount}</div>
-                          <div className="mt-3 space-y-2">
-                            {invoice.status !== 'paid' && userType === 'client' && (
-                              <Button 
-                                size="sm" 
-                                className="bg-green-600 hover:bg-green-700 w-full"
-                                onClick={() => handlePayNow(invoice)}
-                              >
-                                <CreditCard className="h-4 w-4 mr-2" />
-                                Pay Now
-                              </Button>
-                            )}
-                            <Button size="sm" variant="outline" className="w-full">
-                              <Download className="h-4 w-4 mr-2" />
-                              Download
+                        <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">{invoice.description}</div>
+                        <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                          <span>Date: {invoice.invoiceDate || invoice.date}</span>
+                          <span>Due: {invoice.dueDate}</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">${invoice.amount}</div>
+                        <div className="mt-3 space-y-2">
+                          {invoice.status !== 'paid' && userType === 'client' && (
+                            <Button 
+                              size="sm" 
+                              className="bg-green-600 hover:bg-green-700 w-full"
+                              onClick={() => handlePayNow(invoice)}
+                            >
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              Pay Now
                             </Button>
-                          </div>
+                          )}
+                          <Button size="sm" variant="outline" className="w-full dark:border-gray-600 dark:text-gray-300">
+                            <Download className="h-4 w-4 mr-2" />
+                            Download
+                          </Button>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-                {userInvoices.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
+                  </div>
+                ))}
+                {invoices.length === 0 && (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                     No invoices found
                   </div>
                 )}
@@ -194,34 +240,41 @@ const BillingPayments = ({ userType, userId, onBack }) => {
           {/* Payment Form or Info */}
           <div className="lg:col-span-1">
             {showPaymentForm && selectedInvoice ? (
-              <Card>
+              <Card className="dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle>Payment Details</CardTitle>
+                  <CardTitle className="dark:text-white">Payment Details</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handlePayment} className="space-y-4">
-                    <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                      <div className="text-sm text-gray-600">Amount to Pay</div>
-                      <div className="text-2xl font-bold text-blue-900">${selectedInvoice.amount}</div>
-                      <div className="text-sm text-gray-600 mt-1">{selectedInvoice.description}</div>
+                    <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg mb-4">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Amount to Pay</div>
+                      <div className="text-2xl font-bold text-blue-900 dark:text-blue-200">${selectedInvoice.amount}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{selectedInvoice.description}</div>
+                    </div>
+
+                    <div className="bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded-lg mb-4">
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        <strong>DEMO MODE:</strong> This is a simulated payment. No actual charges will be made.
+                      </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Card Number
                       </label>
                       <Input
                         type="text"
-                        placeholder="1234 5678 9012 3456"
+                        placeholder="4242 4242 4242 4242"
                         value={paymentDetails.cardNumber}
                         onChange={(e) => setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })}
                         maxLength="19"
                         required
+                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Cardholder Name
                       </label>
                       <Input
@@ -230,12 +283,13 @@ const BillingPayments = ({ userType, userId, onBack }) => {
                         value={paymentDetails.cardName}
                         onChange={(e) => setPaymentDetails({ ...paymentDetails, cardName: e.target.value })}
                         required
+                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Expiry Date
                         </label>
                         <Input
@@ -245,10 +299,11 @@ const BillingPayments = ({ userType, userId, onBack }) => {
                           onChange={(e) => setPaymentDetails({ ...paymentDetails, expiry: e.target.value })}
                           maxLength="5"
                           required
+                          className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           CVV
                         </label>
                         <Input
@@ -258,26 +313,31 @@ const BillingPayments = ({ userType, userId, onBack }) => {
                           onChange={(e) => setPaymentDetails({ ...paymentDetails, cvv: e.target.value })}
                           maxLength="4"
                           required
+                          className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         />
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                         <CheckCircle className="h-4 w-4 text-green-600" />
                         <span>Powered by Stripe - Secure Payment</span>
                       </div>
                     </div>
 
-                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-6">
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-green-600 hover:bg-green-700 text-lg py-6"
+                      disabled={processing}
+                    >
                       <CreditCard className="h-5 w-5 mr-2" />
-                      Pay ${selectedInvoice.amount}
+                      {processing ? 'Processing...' : `Pay $${selectedInvoice.amount}`}
                     </Button>
 
                     <Button 
                       type="button" 
                       variant="outline" 
-                      className="w-full"
+                      className="w-full dark:border-gray-600 dark:text-gray-300"
                       onClick={() => {
                         setShowPaymentForm(false);
                         setSelectedInvoice(null);
@@ -289,29 +349,29 @@ const BillingPayments = ({ userType, userId, onBack }) => {
                 </CardContent>
               </Card>
             ) : (
-              <Card>
+              <Card className="dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle>Payment Information</CardTitle>
+                  <CardTitle className="dark:text-white">Payment Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
                     <div className="flex items-start space-x-2">
                       <CreditCard className="h-5 w-5 text-blue-600 mt-0.5" />
                       <div>
-                        <div className="text-sm font-medium text-blue-900">Secure Payments</div>
-                        <div className="text-xs text-blue-700 mt-1">
+                        <div className="text-sm font-medium text-blue-900 dark:text-blue-200">Secure Payments</div>
+                        <div className="text-xs text-blue-700 dark:text-blue-300 mt-1">
                           All payments are processed securely through Stripe with bank-level encryption.
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg">
                     <div className="flex items-start space-x-2">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="text-sm font-medium text-green-900">HIPAA Compliant</div>
-                        <div className="text-xs text-green-700 mt-1">
+                        <div className="text-sm font-medium text-green-900 dark:text-green-200">HIPAA Compliant</div>
+                        <div className="text-xs text-green-700 dark:text-green-300 mt-1">
                           Your payment information is stored securely and never shared.
                         </div>
                       </div>
@@ -320,14 +380,14 @@ const BillingPayments = ({ userType, userId, onBack }) => {
 
                   {userType === 'client' && (
                     <div className="space-y-2">
-                      <div className="text-sm font-medium text-gray-700">Payment Methods</div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Payment Methods</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         • Credit/Debit Cards (Visa, Mastercard, Amex)
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         • Insurance claims processed separately
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         • Receipts emailed automatically
                       </div>
                     </div>
@@ -335,10 +395,10 @@ const BillingPayments = ({ userType, userId, onBack }) => {
 
                   {userType === 'provider' && (
                     <div className="space-y-2">
-                      <div className="text-sm font-medium text-gray-700">Billing Settings</div>
-                      <Button variant="outline" className="w-full">Configure Auto-Billing</Button>
-                      <Button variant="outline" className="w-full">Manage Payment Methods</Button>
-                      <Button variant="outline" className="w-full">View Payout Schedule</Button>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Billing Settings</div>
+                      <Button variant="outline" className="w-full dark:border-gray-600 dark:text-gray-300">Configure Auto-Billing</Button>
+                      <Button variant="outline" className="w-full dark:border-gray-600 dark:text-gray-300">Manage Payment Methods</Button>
+                      <Button variant="outline" className="w-full dark:border-gray-600 dark:text-gray-300">View Payout Schedule</Button>
                     </div>
                   )}
                 </CardContent>
