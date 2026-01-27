@@ -25,7 +25,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      // Redirect based on current path
+      const isClientPath = window.location.pathname.includes('/client');
+      window.location.href = isClientPath ? '/client/login' : '/provider/login';
     }
     return Promise.reject(error);
   }
