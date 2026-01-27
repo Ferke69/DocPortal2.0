@@ -262,6 +262,7 @@ const Register = () => {
                     type="submit" 
                     className="w-2/3 bg-green-600 hover:bg-green-700"
                     disabled={loading}
+                    data-testid="register-submit-btn"
                   >
                     {loading ? 'Creating Account...' : 'Create Account'}
                   </Button>
