@@ -1,17 +1,27 @@
 {
+  "_comment": "SLOVENIAN TRANSLATIONS - Last updated: 2025-01-27",
+  "_note": "This file contains machine translations. Please review and correct with professional translator.",
+  "_translator_notes": {
+    "provider": "Healthcare professional - doctor, therapist, psychiatrist",
+    "client": "Patient/client in mental health context",
+    "HIPAA": "US healthcare privacy law - keep as HIPAA or explain in local context",
+    "session": "Therapy/consultation session, not a meeting"
+  },
+  
   "landing": {
+    "_section": "Landing page - First impression, marketing copy",
     "title": "Upravljanje prakse",
     "subtitle": "Narejeno enostavno",
-    "description": "Vse-v-enem platforma za strokovnjake duševnega zdravja. Upravljajte svojo prakso, povezujte se s strankami in zagotavljajte oskrbo—vse iz vaše mobilne naprave.",
-    "providerLogin": "Prijava ponudnika",
-    "clientLogin": "Prijava stranke",
-    "getStartedProvider": "Začnite kot ponudnik",
-    "accessClientPortal": "Dostop do portala strank",
+    "description": "Vse-v-enem platforma za strokovnjake duševnega zdravja. Upravljajte svojo prakso, povezujte se s pacienti in zagotavljajte oskrbo—vse iz vaše mobilne naprave.",
+    "providerLogin": "Prijava zdravnika",
+    "clientLogin": "Prijava pacienta",
+    "getStartedProvider": "Začnite kot zdravnik",
+    "accessClientPortal": "Dostop do portala za paciente",
     "featuresTitle": "Vse kar potrebujete na enem mestu",
     "featuresSubtitle": "Orodja skladna s HIPAA, zasnovana za sodobne zdravstvene prakse",
     "ctaTitle": "Pripravljeni poenostaviti svojo prakso?",
-    "ctaDescription": "Pridružite se tisočim strokovnjakov za duševno zdravje, ki zaupajo SimplePractice",
-    "startProvider": "Začnite kot ponudnik",
+    "ctaDescription": "Pridružite se tisočim strokovnjakom za duševno zdravje, ki zaupajo SimplePractice",
+    "startProvider": "Začnite kot zdravnik",
     "footer": "Upravljanje prakse skladno s HIPAA za strokovnjake duševnega zdravja"
   },
   "features": {
