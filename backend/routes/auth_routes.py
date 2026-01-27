@@ -206,7 +206,7 @@ async def logout(response: Response):
 @router.get("/users/providers")
 async def get_all_providers():
     """Get all providers for appointment booking"""
-    providers = await database.users.find(
+    providers = await users_collection.find(
         {"userType": "provider"},
         {"hashed_password": 0}  # Exclude password
     ).to_list(100)
