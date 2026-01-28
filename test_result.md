@@ -338,10 +338,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Provider Registration"
-    - "Invite Code Generation"
-    - "Client Registration with Invite Code"
-    - "Invite Code Validation Endpoint"
+    - "Messaging System - Send Messages"
+    - "Messaging System - Get Messages"
+    - "Appointment System - Create Appointments"
+    - "Appointment System - Get Appointment Details"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
