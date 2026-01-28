@@ -213,37 +213,6 @@ const LandingPage = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
-            {/* Provider Flow */}
-            <div>
-              <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6 flex items-center">
-                <Stethoscope className="h-6 w-6 mr-2" />
-                {t('landing.forProviders')}
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-4">
-                  <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step1Provider')}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step1ProviderDesc')}</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step2Provider')}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step2ProviderDesc')}</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Provider')}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ProviderDesc')}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Client Flow */}
             <div>
               <h3 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-6 flex items-center">
@@ -270,6 +239,37 @@ const LandingPage = () => {
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Client')}</p>
                     <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ClientDesc')}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Provider Flow */}
+            <div>
+              <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6 flex items-center">
+                <Stethoscope className="h-6 w-6 mr-2" />
+                {t('landing.forProviders')}
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step1Provider')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step1ProviderDesc')}</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step2Provider')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step2ProviderDesc')}</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Provider')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ProviderDesc')}</p>
                   </div>
                 </div>
               </div>
