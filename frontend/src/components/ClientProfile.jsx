@@ -203,13 +203,13 @@ const ClientProfile = ({ onBack }) => {
             <CardHeader>
               <CardTitle className="flex items-center text-gray-900 dark:text-white">
                 <User className="h-5 w-5 mr-2 text-green-600" />
-                Personal Information
+                {t('profile.personalInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name">{t('profile.fullName')}</Label>
                   <Input
                     id="name"
                     value={formData.name}
@@ -218,7 +218,7 @@ const ClientProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('profile.email')}</Label>
                   <Input
                     id="email"
                     value={formData.email}
@@ -227,7 +227,7 @@ const ClientProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">{t('profile.phone')}</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
@@ -237,7 +237,7 @@ const ClientProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Label htmlFor="dateOfBirth">{t('profile.dateOfBirth')}</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
@@ -249,7 +249,7 @@ const ClientProfile = ({ onBack }) => {
               </div>
               
               <div>
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">{t('profile.address')}</Label>
                 <Input
                   id="address"
                   value={formData.address}
@@ -265,7 +265,7 @@ const ClientProfile = ({ onBack }) => {
                 disabled={loading}
               >
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('profile.saving') : t('profile.saveChanges')}
               </Button>
             </CardContent>
           </Card>
