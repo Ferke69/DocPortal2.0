@@ -267,6 +267,86 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     
     return user
 
+
+@router.patch("/profile")
+async def update_profile(updates: dict, current_user: dict = Depends(get_current_user)):
+    """Update current user profile"""
+    user_id = current_user["userId"]
+    
+    # Fields that can be updated
+    allowed_fields = [
+        "name", "phone", "avatar",
+        # Provider fields
+        "specialty", "license", "bio", "hourlyRate",
+        # Client fields
+        "dateOfBirth", "address", "insurance", "emergencyContact"
+    ]
+    
+    # Filter to only allowed fields
+    update_data = {k: v for k, v in updates.items() if k in allowed_fields}
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+    
+    update_data["updatedAt"] = datetime.now(timezone.utc)
+    
+    result = await users_collection.update_one(
+        {"user_id": user_id},
+        {"$set": update_data}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="User not found or no changes made")
+    
+    # Return updated user
+    user = await users_collection.find_one(
+        {"user_id": user_id},
+        {"_id": 0, "password": 0}
+    )
+    
+    await log_audit(user_id, "update", "user", user_id, {"fields": list(update_data.keys())})
+    
+    return user
+
+
+@router.post("/change-password")
+async def change_password(password_data: dict, current_user: dict = Depends(get_current_user)):
+    """Change user password"""
+    user_id = current_user["userId"]
+    
+    current_password = password_data.get("currentPassword")
+    new_password = password_data.get("newPassword")
+    
+    if not current_password or not new_password:
+        raise HTTPException(status_code=400, detail="Current and new password are required")
+    
+    if len(new_password) < 8:
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters")
+    
+    # Get user with password
+    user = await users_collection.find_one({"user_id": user_id})
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Verify current password
+    if not verify_password(current_password, user["password"]):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Update password
+    hashed_password = get_password_hash(new_password)
+    await users_collection.update_one(
+        {"user_id": user_id},
+        {"$set": {
+            "password": hashed_password,
+            "updatedAt": datetime.now(timezone.utc)
+        }}
+    )
+    
+    await log_audit(user_id, "update", "user", user_id, {"action": "password_change"})
+    
+    return {"message": "Password changed successfully"}
+
 @router.post("/logout")
 async def logout(response: Response):
     """Logout user"""
