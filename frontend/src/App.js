@@ -17,6 +17,8 @@ import ClientPortal from './components/ClientPortal';
 import MessagingCenter from './components/MessagingCenter';
 import AppointmentBooking from './components/AppointmentBooking';
 import BillingPayments from './components/BillingPayments';
+import ProviderProfile from './components/ProviderProfile';
+import ClientProfile from './components/ClientProfile';
 
 // Keep old Login/Register for backward compatibility during transition
 import Login from './components/Login';
