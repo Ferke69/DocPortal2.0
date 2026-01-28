@@ -413,7 +413,7 @@ const ProviderDashboard = ({ onNavigate }) => {
           </div>
         </header>
 
-        <div className="p-4 sm:p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
           {/* Desktop Header */}
           <div className="hidden lg:flex items-center justify-between mb-8">
             <div>
