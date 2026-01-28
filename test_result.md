@@ -197,6 +197,54 @@ backend:
         agent: "testing"
         comment: "Previously tested and working"
 
+  - task: "Messaging System - Send Messages"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/message_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Messaging system working perfectly. POST /api/messages successfully sends messages between provider and client. Both directions tested (provider→client, client→provider). Messages are properly stored with correct senderId, receiverId, and senderType."
+
+  - task: "Messaging System - Get Messages"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/message_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Message retrieval working correctly. GET /api/messages with conversationWith parameter successfully returns messages between specific users. Both provider and client can retrieve their conversation history."
+
+  - task: "Appointment System - Create Appointments"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/appointment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Appointment creation working perfectly. POST /api/appointments allows clients to book appointments with their provider. Automatically generates Google Meet-style video links and sets status to 'pending'."
+
+  - task: "Appointment System - Get Appointment Details"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/appointment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Appointment retrieval working correctly. GET /api/appointments/{id} returns complete appointment details including auto-generated video links (e.g., https://meet.google.com/qbz-Dw5L-y0n). Both provider and client can access appointment details."
+
 frontend:
   - task: "Separate Provider Login Page"
     implemented: true
