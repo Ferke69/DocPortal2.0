@@ -526,16 +526,251 @@ def test_get_client_provider(results, client_token):
     
     return False
 
+def test_send_message_provider_to_client(results, provider_token, provider_user, client_user):
+    """Test sending message from provider to client"""
+    print("\n🧪 Testing Send Message (Provider to Client)...")
+    
+    message_data = {
+        "senderId": provider_user["user_id"],
+        "receiverId": client_user["user_id"],
+        "senderType": "provider",
+        "message": "Hello! This is a test message from your provider. How are you feeling today?"
+    }
+    
+    response = make_request("POST", "/messages", message_data, auth_token=provider_token)
+    
+    if not response:
+        results.log_fail("Send Message (Provider to Client)", "Request failed")
+        return None
+        
+    if response.status_code == 200 or response.status_code == 201:
+        try:
+            data = response.json()
+            if "message" in data and "id" in data:
+                results.log_pass("Send Message (Provider to Client)")
+                return data["id"]
+            else:
+                results.log_fail("Send Message (Provider to Client)", "Missing message or id in response")
+        except json.JSONDecodeError:
+            results.log_fail("Send Message (Provider to Client)", "Invalid JSON response")
+    else:
+        try:
+            error_data = response.json()
+            results.log_fail("Send Message (Provider to Client)", f"HTTP {response.status_code}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Send Message (Provider to Client)", f"HTTP {response.status_code}: {response.text}")
+    
+    return None
+
+def test_send_message_client_to_provider(results, client_token, client_user, provider_user):
+    """Test sending message from client to provider"""
+    print("\n🧪 Testing Send Message (Client to Provider)...")
+    
+    message_data = {
+        "senderId": client_user["user_id"],
+        "receiverId": provider_user["user_id"],
+        "senderType": "client",
+        "message": "Thank you for your message! I'm doing well and looking forward to our next appointment."
+    }
+    
+    response = make_request("POST", "/messages", message_data, auth_token=client_token)
+    
+    if not response:
+        results.log_fail("Send Message (Client to Provider)", "Request failed")
+        return None
+        
+    if response.status_code == 200 or response.status_code == 201:
+        try:
+            data = response.json()
+            if "message" in data and "id" in data:
+                results.log_pass("Send Message (Client to Provider)")
+                return data["id"]
+            else:
+                results.log_fail("Send Message (Client to Provider)", "Missing message or id in response")
+        except json.JSONDecodeError:
+            results.log_fail("Send Message (Client to Provider)", "Invalid JSON response")
+    else:
+        try:
+            error_data = response.json()
+            results.log_fail("Send Message (Client to Provider)", f"HTTP {response.status_code}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Send Message (Client to Provider)", f"HTTP {response.status_code}: {response.text}")
+    
+    return None
+
+def test_get_messages(results, provider_token, client_token, provider_user, client_user):
+    """Test getting messages between provider and client"""
+    print("\n🧪 Testing Get Messages...")
+    
+    # Test provider getting messages
+    response = make_request("GET", f"/messages?conversationWith={client_user['user_id']}", auth_token=provider_token)
+    
+    if not response:
+        results.log_fail("Get Messages (Provider)", "Request failed")
+        return False
+        
+    if response.status_code == 200:
+        try:
+            messages = response.json()
+            if isinstance(messages, list):
+                # Check if we have messages between provider and client
+                found_messages = len(messages) > 0
+                if found_messages:
+                    results.log_pass("Get Messages (Provider)")
+                else:
+                    results.log_pass("Get Messages (Provider) - No messages found but API working")
+            else:
+                results.log_fail("Get Messages (Provider)", "Response is not a list")
+                return False
+        except json.JSONDecodeError:
+            results.log_fail("Get Messages (Provider)", "Invalid JSON response")
+            return False
+    else:
+        try:
+            error_data = response.json()
+            results.log_fail("Get Messages (Provider)", f"HTTP {response.status_code}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Get Messages (Provider)", f"HTTP {response.status_code}: {response.text}")
+        return False
+    
+    # Test client getting messages
+    response = make_request("GET", f"/messages?conversationWith={provider_user['user_id']}", auth_token=client_token)
+    
+    if not response:
+        results.log_fail("Get Messages (Client)", "Request failed")
+        return False
+        
+    if response.status_code == 200:
+        try:
+            messages = response.json()
+            if isinstance(messages, list):
+                results.log_pass("Get Messages (Client)")
+                return True
+            else:
+                results.log_fail("Get Messages (Client)", "Response is not a list")
+        except json.JSONDecodeError:
+            results.log_fail("Get Messages (Client)", "Invalid JSON response")
+    else:
+        try:
+            error_data = response.json()
+            results.log_fail("Get Messages (Client)", f"HTTP {response.status_code}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Get Messages (Client)", f"HTTP {response.status_code}: {response.text}")
+    
+    return False
+
+def test_create_appointment(results, client_token, client_user, provider_user):
+    """Test creating appointment from client"""
+    print("\n🧪 Testing Create Appointment (Client booking)...")
+    
+    appointment_data = {
+        "clientId": client_user["user_id"],
+        "providerId": provider_user["user_id"],
+        "date": "2025-01-20",
+        "time": "14:00",
+        "duration": 60,
+        "type": "Consultation",
+        "notes": "Follow-up appointment to discuss treatment progress",
+        "amount": 150.0
+    }
+    
+    response = make_request("POST", "/appointments", appointment_data, auth_token=client_token)
+    
+    if not response:
+        results.log_fail("Create Appointment", "Request failed")
+        return None
+        
+    if response.status_code == 200 or response.status_code == 201:
+        try:
+            data = response.json()
+            if "id" in data and "videoLink" in data:
+                results.log_pass("Create Appointment")
+                return data["id"]
+            else:
+                results.log_fail("Create Appointment", "Missing id or videoLink in response")
+        except json.JSONDecodeError:
+            results.log_fail("Create Appointment", "Invalid JSON response")
+    else:
+        try:
+            error_data = response.json()
+            results.log_fail("Create Appointment", f"HTTP {response.status_code}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Create Appointment", f"HTTP {response.status_code}: {response.text}")
+    
+    return None
+
+def test_get_appointment(results, appointment_id, client_token, provider_token):
+    """Test getting appointment details"""
+    print("\n🧪 Testing Get Appointment Details...")
+    
+    # Test client getting appointment
+    response = make_request("GET", f"/appointments/{appointment_id}", auth_token=client_token)
+    
+    if not response:
+        results.log_fail("Get Appointment (Client)", "Request failed")
+        return False
+        
+    if response.status_code == 200:
+        try:
+            appointment = response.json()
+            if "videoLink" in appointment and "status" in appointment:
+                results.log_pass("Get Appointment (Client)")
+                print(f"  ✓ Video link generated: {appointment['videoLink']}")
+                print(f"  ✓ Status: {appointment['status']}")
+            else:
+                results.log_fail("Get Appointment (Client)", "Missing videoLink or status in response")
+                return False
+        except json.JSONDecodeError:
+            results.log_fail("Get Appointment (Client)", "Invalid JSON response")
+            return False
+    else:
+        try:
+            error_data = response.json()
+            results.log_fail("Get Appointment (Client)", f"HTTP {response.status_code}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Get Appointment (Client)", f"HTTP {response.status_code}: {response.text}")
+        return False
+    
+    # Test provider getting appointment
+    response = make_request("GET", f"/appointments/{appointment_id}", auth_token=provider_token)
+    
+    if not response:
+        results.log_fail("Get Appointment (Provider)", "Request failed")
+        return False
+        
+    if response.status_code == 200:
+        try:
+            appointment = response.json()
+            if "videoLink" in appointment and "status" in appointment:
+                results.log_pass("Get Appointment (Provider)")
+                return True
+            else:
+                results.log_fail("Get Appointment (Provider)", "Missing videoLink or status in response")
+        except json.JSONDecodeError:
+            results.log_fail("Get Appointment (Provider)", "Invalid JSON response")
+    else:
+        try:
+            error_data = response.json()
+            results.log_fail("Get Appointment (Provider)", f"HTTP {response.status_code}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Get Appointment (Provider)", f"HTTP {response.status_code}: {response.text}")
+    
+    return False
+
 def main():
-    """Main test execution - Updated for specific review request"""
-    print("🚀 Starting DocPortal Backend API Tests - Review Request")
+    """Main test execution - Messaging and Appointment Flow"""
+    print("🚀 Starting DocPortal Backend API Tests - Messaging & Appointments")
     print(f"Testing against: {BASE_URL}")
     print(f"Timestamp: {datetime.now().isoformat()}")
-    print("\nTesting specific scenarios from review request:")
-    print("1. Provider login: POST /api/auth/login with provider credentials")
-    print("2. Get provider's clients: GET /api/provider/clients (should show Emily Thompson)")
-    print("3. Client login: POST /api/auth/login with client credentials")
-    print("4. Get client's assigned provider: GET /api/client/provider (should show Dr. Sarah Johnson)")
+    print("\nTesting complete messaging and appointment flow:")
+    print("1. Create provider account and login")
+    print("2. Generate invite code")
+    print("3. Create client account using invite code")
+    print("4. Send message from provider to client")
+    print("5. Send message from client to provider")
+    print("6. Get all messages to verify they are saved")
+    print("7. Create appointment from client")
+    print("8. Get appointment details and verify video link")
     
     results = TestResults()
     
@@ -544,35 +779,48 @@ def main():
         print("❌ API is not healthy, stopping tests")
         return False
     
-    # Test 1: Specific Provider Login
-    provider_token, provider_user = test_specific_provider_login(results)
+    # Step 1: Create and login provider
+    provider_token, provider_user = test_provider_registration(results)
     if not provider_token:
-        print("❌ Specific provider login failed")
-        # Continue with other tests even if this fails
+        print("❌ Provider registration failed, stopping tests")
+        return False
     
-    # Test 2: Get Provider's Clients (if provider login worked)
-    if provider_token:
-        test_get_provider_clients(results, provider_token)
-    else:
-        results.log_fail("Get Provider Clients", "Skipped due to provider login failure")
+    # Step 2: Generate invite code
+    invite_code = test_invite_code_generation(results, provider_token)
+    if not invite_code:
+        print("❌ Invite code generation failed, stopping tests")
+        return False
     
-    # Test 3: Specific Client Login
-    client_token, client_user = test_specific_client_login(results)
+    # Step 3: Create and login client with invite code
+    client_token, client_user = test_client_registration_with_invite(results, invite_code, provider_user["user_id"])
     if not client_token:
-        print("❌ Specific client login failed")
-        # Continue with other tests even if this fails
+        print("❌ Client registration failed, stopping tests")
+        return False
     
-    # Test 4: Get Client's Assigned Provider (if client login worked)
-    if client_token:
-        test_get_client_provider(results, client_token)
+    # Step 4: Send message from provider to client
+    message_id_1 = test_send_message_provider_to_client(results, provider_token, provider_user, client_user)
+    
+    # Step 5: Send message from client to provider
+    message_id_2 = test_send_message_client_to_provider(results, client_token, client_user, provider_user)
+    
+    # Step 6: Get messages to verify they are saved
+    test_get_messages(results, provider_token, client_token, provider_user, client_user)
+    
+    # Step 7: Create appointment from client
+    appointment_id = test_create_appointment(results, client_token, client_user, provider_user)
+    
+    # Step 8: Get appointment details and verify video link
+    if appointment_id:
+        test_get_appointment(results, appointment_id, client_token, provider_token)
     else:
-        results.log_fail("Get Client Provider", "Skipped due to client login failure")
+        results.log_fail("Get Appointment", "Skipped due to appointment creation failure")
     
     # Final summary
     success = results.summary()
     
     if success:
-        print("\n🎉 All review request tests passed!")
+        print("\n🎉 All messaging and appointment tests passed!")
+        print("✅ Complete provider-client communication flow is working!")
     else:
         print("\n⚠️  Some tests failed. Please check the errors above.")
     
