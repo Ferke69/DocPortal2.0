@@ -356,12 +356,12 @@ const ClientProfile = ({ onBack }) => {
               <CardHeader>
                 <CardTitle className="flex items-center text-gray-900 dark:text-white">
                   <Lock className="h-5 w-5 mr-2 text-green-600" />
-                  Change Password
+                  {t('profile.changePassword')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Label htmlFor="currentPassword">{t('profile.currentPassword')}</Label>
                   <Input
                     id="currentPassword"
                     type="password"
@@ -371,7 +371,7 @@ const ClientProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="newPassword">New Password</Label>
+                  <Label htmlFor="newPassword">{t('profile.newPassword')}</Label>
                   <Input
                     id="newPassword"
                     type="password"
@@ -381,7 +381,7 @@ const ClientProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Label htmlFor="confirmPassword">{t('profile.confirmNewPassword')}</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -395,20 +395,20 @@ const ClientProfile = ({ onBack }) => {
                   className="bg-green-600 hover:bg-green-700"
                   disabled={loading || !passwordData.currentPassword || !passwordData.newPassword}
                 >
-                  {loading ? 'Updating...' : 'Update Password'}
+                  {loading ? t('profile.updating') : t('profile.updatePassword')}
                 </Button>
               </CardContent>
             </Card>
 
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Appearance</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-white">{t('profile.appearance')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Dark Mode</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Toggle between light and dark theme</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.darkMode')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.darkModeDesc')}</p>
                   </div>
                   <ThemeToggle />
                 </div>
@@ -417,15 +417,30 @@ const ClientProfile = ({ onBack }) => {
 
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Language</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-white">{t('profile.language')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Display Language</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred language</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.displayLanguage')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.displayLanguageDesc')}</p>
                   </div>
                   <LanguageSelector />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white">{t('profile.currency')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.displayCurrency')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.displayCurrencyDesc')}</p>
+                  </div>
+                  <CurrencySelector />
                 </div>
               </CardContent>
             </Card>
