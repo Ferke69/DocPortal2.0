@@ -14,6 +14,7 @@ import LanguageSelector from './LanguageSelector';
 import CurrencySelector from './CurrencySelector';
 
 const ClientProfile = ({ onBack }) => {
+  const { t } = useTranslation();
   const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
