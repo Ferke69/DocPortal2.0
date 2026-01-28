@@ -143,6 +143,14 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/provider/profile" 
+        element={
+          <ProtectedRoute requiredType="provider">
+            <ProviderProfile onBack={() => window.location.href = '/provider/dashboard'} />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Client Routes */}
       <Route 
