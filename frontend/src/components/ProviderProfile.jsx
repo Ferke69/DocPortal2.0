@@ -117,9 +117,9 @@ const ProviderProfile = ({ onBack }) => {
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" onClick={onBack}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                {t('common.back')}
               </Button>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Profile & Settings</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('profile.title')}</h1>
             </div>
             <div className="flex items-center space-x-2">
               <ThemeToggle />
@@ -162,7 +162,7 @@ const ProviderProfile = ({ onBack }) => {
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            Profile
+            {t('profile.myProfile')}
           </button>
           <button
             onClick={() => setActiveTab('security')}
@@ -172,7 +172,7 @@ const ProviderProfile = ({ onBack }) => {
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            Security
+            {t('profile.security')}
           </button>
           <button
             onClick={() => setActiveTab('settings')}
@@ -182,7 +182,7 @@ const ProviderProfile = ({ onBack }) => {
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            Settings
+            {t('profile.settings')}
           </button>
         </div>
 
@@ -192,13 +192,13 @@ const ProviderProfile = ({ onBack }) => {
             <CardHeader>
               <CardTitle className="flex items-center text-gray-900 dark:text-white">
                 <User className="h-5 w-5 mr-2 text-blue-600" />
-                Personal Information
+                {t('profile.personalInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name">{t('profile.fullName')}</Label>
                   <Input
                     id="name"
                     value={formData.name}
@@ -207,7 +207,7 @@ const ProviderProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('profile.email')}</Label>
                   <Input
                     id="email"
                     value={formData.email}
@@ -216,7 +216,7 @@ const ProviderProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">{t('profile.phone')}</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
@@ -226,7 +226,7 @@ const ProviderProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="specialty">Specialty</Label>
+                  <Label htmlFor="specialty">{t('profile.specialty')}</Label>
                   <Input
                     id="specialty"
                     value={formData.specialty}
@@ -236,7 +236,7 @@ const ProviderProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="license">License Number</Label>
+                  <Label htmlFor="license">{t('profile.licenseNumber')}</Label>
                   <Input
                     id="license"
                     value={formData.license}
@@ -246,7 +246,7 @@ const ProviderProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="hourlyRate">Hourly Rate ($)</Label>
+                  <Label htmlFor="hourlyRate">{t('profile.hourlyRate')}</Label>
                   <Input
                     id="hourlyRate"
                     type="number"
@@ -259,12 +259,12 @@ const ProviderProfile = ({ onBack }) => {
               </div>
               
               <div>
-                <Label htmlFor="bio">Bio / About</Label>
+                <Label htmlFor="bio">{t('profile.bio')}</Label>
                 <textarea
                   id="bio"
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  placeholder="Tell your clients about yourself, your experience, and approach..."
+                  placeholder={t('profile.bioPlaceholder')}
                   rows={4}
                   className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -276,7 +276,7 @@ const ProviderProfile = ({ onBack }) => {
                 disabled={loading}
               >
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('profile.saving') : t('profile.saveChanges')}
               </Button>
             </CardContent>
           </Card>
@@ -288,13 +288,13 @@ const ProviderProfile = ({ onBack }) => {
             <CardHeader>
               <CardTitle className="flex items-center text-gray-900 dark:text-white">
                 <Lock className="h-5 w-5 mr-2 text-blue-600" />
-                Change Password
+                {t('profile.changePassword')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="max-w-md space-y-4">
                 <div>
-                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Label htmlFor="currentPassword">{t('profile.currentPassword')}</Label>
                   <Input
                     id="currentPassword"
                     type="password"
@@ -304,7 +304,7 @@ const ProviderProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="newPassword">New Password</Label>
+                  <Label htmlFor="newPassword">{t('profile.newPassword')}</Label>
                   <Input
                     id="newPassword"
                     type="password"
@@ -314,7 +314,7 @@ const ProviderProfile = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Label htmlFor="confirmPassword">{t('profile.confirmNewPassword')}</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -330,7 +330,7 @@ const ProviderProfile = ({ onBack }) => {
                 className="bg-blue-600 hover:bg-blue-700"
                 disabled={loading || !passwordData.currentPassword || !passwordData.newPassword}
               >
-                {loading ? 'Updating...' : 'Update Password'}
+                {loading ? t('profile.updating') : t('profile.updatePassword')}
               </Button>
             </CardContent>
           </Card>
@@ -341,13 +341,13 @@ const ProviderProfile = ({ onBack }) => {
           <div className="space-y-6">
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Appearance</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-white">{t('profile.appearance')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Dark Mode</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Toggle between light and dark theme</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.darkMode')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.darkModeDesc')}</p>
                   </div>
                   <ThemeToggle />
                 </div>
@@ -356,13 +356,13 @@ const ProviderProfile = ({ onBack }) => {
 
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Language</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-white">{t('profile.language')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Display Language</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred language</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.displayLanguage')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.displayLanguageDesc')}</p>
                   </div>
                   <LanguageSelector />
                 </div>
@@ -371,20 +371,35 @@ const ProviderProfile = ({ onBack }) => {
 
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Notifications</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-white">{t('profile.currency')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.displayCurrency')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.displayCurrencyDesc')}</p>
+                  </div>
+                  <CurrencySelector />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white">{t('profile.notifications')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Email Notifications</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Receive appointment reminders via email</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.emailNotifications')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.emailNotificationsDesc')}</p>
                   </div>
                   <input type="checkbox" defaultChecked className="h-5 w-5 text-blue-600 rounded" />
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">New Message Alerts</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Get notified when clients send messages</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('profile.messageAlerts')}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('profile.messageAlertsDesc')}</p>
                   </div>
                   <input type="checkbox" defaultChecked className="h-5 w-5 text-blue-600 rounded" />
                 </div>
