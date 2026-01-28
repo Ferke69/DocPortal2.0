@@ -292,7 +292,7 @@ const LandingPage = () => {
               className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-6"
             >
               <Stethoscope className="h-5 w-5 mr-2" />
-              Start as Provider
+              {t('landing.startProvider')}
             </Button>
             <Button 
               size="lg" 
@@ -301,7 +301,7 @@ const LandingPage = () => {
               className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6"
             >
               <User className="h-5 w-5 mr-2" />
-              Access Client Portal
+              {t('landing.accessClientPortal')}
             </Button>
           </div>
         </div>
