@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, User, Mail, Phone, Calendar, MapPin, Shield, Camera, Save, Lock, Heart } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -10,6 +11,7 @@ import { toast } from '../hooks/use-toast';
 import api from '../services/api';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
+import CurrencySelector from './CurrencySelector';
 
 const ClientProfile = ({ onBack }) => {
   const { user, setUser } = useAuth();
