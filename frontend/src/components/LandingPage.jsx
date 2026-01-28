@@ -54,37 +54,6 @@ const LandingPage = () => {
           
           {/* Two Portal Entry Points */}
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Provider Portal Card */}
-            <Card className="hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-blue-200 dark:border-blue-800 dark:bg-gray-800">
-              <CardContent className="p-8 text-center">
-                <div className="h-20 w-20 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Stethoscope className="h-10 w-10 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{t('landing.healthcareProvider')}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  {t('landing.healthcareProviderDesc')}
-                </p>
-                <div className="space-y-3">
-                  <Button 
-                    size="lg" 
-                    onClick={() => navigate('/provider/login')} 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    {t('landing.providerLogin')}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    onClick={() => navigate('/provider/register')} 
-                    className="w-full dark:border-gray-600 dark:text-gray-300"
-                  >
-                    {t('landing.registerAsProvider')}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Client Portal Card */}
             <Card className="hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-green-200 dark:border-green-800 dark:bg-gray-800">
               <CardContent className="p-8 text-center">
@@ -113,6 +82,37 @@ const LandingPage = () => {
                       {t('landing.clickToJoin')}
                     </span>
                   </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Provider Portal Card */}
+            <Card className="hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-blue-200 dark:border-blue-800 dark:bg-gray-800">
+              <CardContent className="p-8 text-center">
+                <div className="h-20 w-20 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Stethoscope className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{t('landing.healthcareProvider')}</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  {t('landing.healthcareProviderDesc')}
+                </p>
+                <div className="space-y-3">
+                  <Button 
+                    size="lg" 
+                    onClick={() => navigate('/provider/login')} 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    {t('landing.providerLogin')}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    onClick={() => navigate('/provider/register')} 
+                    className="w-full dark:border-gray-600 dark:text-gray-300"
+                  >
+                    {t('landing.registerAsProvider')}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
