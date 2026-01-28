@@ -208,8 +208,8 @@ const LandingPage = () => {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">How It Works</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">Simple onboarding for providers and clients</p>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{t('landing.howItWorks')}</h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300">{t('landing.howItWorksSubtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
@@ -217,28 +217,28 @@ const LandingPage = () => {
             <div>
               <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6 flex items-center">
                 <Stethoscope className="h-6 w-6 mr-2" />
-                For Providers
+                {t('landing.forProviders')}
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
                   <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Register your account</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">Create your provider account with email or Google</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step1Provider')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step1ProviderDesc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Generate invite codes</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">Create unique codes for your clients to join</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step2Provider')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step2ProviderDesc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Manage your practice</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">Schedule appointments, send messages, and manage billing</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Provider')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ProviderDesc')}</p>
                   </div>
                 </div>
               </div>
@@ -248,28 +248,28 @@ const LandingPage = () => {
             <div>
               <h3 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-6 flex items-center">
                 <User className="h-6 w-6 mr-2" />
-                For Clients
+                {t('landing.forClients')}
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
                   <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Get invite code from provider</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">Your healthcare provider will share a unique code with you</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step1Client')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step1ClientDesc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Register with the code</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">Create your account and automatically connect to your provider</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step2Client')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step2ClientDesc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Access your portal</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">Book appointments, message your provider, and manage payments</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Client')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ClientDesc')}</p>
                   </div>
                 </div>
               </div>
