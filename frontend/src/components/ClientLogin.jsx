@@ -255,7 +255,7 @@ const ClientLogin = () => {
                     </div>
                   </div>
                   <p className="mt-3 text-sm text-green-800 dark:text-green-200">
-                    ✓ You will be connected to this provider
+                    ✓ {t('auth.willBeConnected')}
                   </p>
                 </div>
               )}
@@ -265,7 +265,7 @@ const ClientLogin = () => {
                   <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Continue with</span>
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">{t('auth.orContinueWith')}</span>
                 </div>
               </div>
 
