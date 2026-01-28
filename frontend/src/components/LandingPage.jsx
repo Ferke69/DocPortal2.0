@@ -60,9 +60,9 @@ const LandingPage = () => {
                 <div className="h-20 w-20 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Stethoscope className="h-10 w-10 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Healthcare Provider</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{t('landing.healthcareProvider')}</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Manage your practice, clients, appointments, and billing all in one place.
+                  {t('landing.healthcareProviderDesc')}
                 </p>
                 <div className="space-y-3">
                   <Button 
@@ -70,7 +70,7 @@ const LandingPage = () => {
                     onClick={() => navigate('/provider/login')} 
                     className="w-full bg-blue-600 hover:bg-blue-700"
                   >
-                    Provider Login
+                    {t('landing.providerLogin')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <Button 
@@ -79,7 +79,7 @@ const LandingPage = () => {
                     onClick={() => navigate('/provider/register')} 
                     className="w-full dark:border-gray-600 dark:text-gray-300"
                   >
-                    Register as Provider
+                    {t('landing.registerAsProvider')}
                   </Button>
                 </div>
               </CardContent>
@@ -91,9 +91,9 @@ const LandingPage = () => {
                 <div className="h-20 w-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
                   <User className="h-10 w-10 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Patient / Client</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{t('landing.patientClient')}</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Access your health portal, book appointments, and communicate with your provider.
+                  {t('landing.patientClientDesc')}
                 </p>
                 <div className="space-y-3">
                   <Button 
@@ -101,16 +101,16 @@ const LandingPage = () => {
                     onClick={() => navigate('/client/login')} 
                     className="w-full bg-green-600 hover:bg-green-700"
                   >
-                    Client Portal
+                    {t('landing.clientLogin')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    Have an invite code from your provider?<br/>
+                    {t('landing.haveInviteCode')}<br/>
                     <span 
                       onClick={() => navigate('/client/login?showRegister=true')} 
                       className="text-green-600 dark:text-green-400 cursor-pointer hover:underline"
                     >
-                      Click here to join
+                      {t('landing.clickToJoin')}
                     </span>
                   </p>
                 </div>
