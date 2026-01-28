@@ -448,7 +448,7 @@ const ProviderDashboard = ({ onNavigate }) => {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
                 <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardContent className="p-3 sm:p-6">
                     <div className="flex items-center justify-between">
@@ -481,25 +481,11 @@ const ProviderDashboard = ({ onNavigate }) => {
                   <CardContent className="p-3 sm:p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Today</p>
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Today's Appointments</p>
                         <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{stats.appointmentsToday}</p>
                       </div>
                       <div className="h-8 w-8 sm:h-12 sm:w-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
                         <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="dark:bg-gray-800 dark:border-gray-700">
-                  <CardContent className="p-3 sm:p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Pending Notes</p>
-                        <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{stats.pendingNotes}</p>
-                      </div>
-                      <div className="h-8 w-8 sm:h-12 sm:w-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                        <FileText className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
                       </div>
                     </div>
                   </CardContent>
