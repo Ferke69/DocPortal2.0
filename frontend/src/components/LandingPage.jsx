@@ -288,20 +288,20 @@ const LandingPage = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button 
               size="lg" 
-              onClick={() => navigate('/provider/register')} 
-              className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-6"
+              onClick={() => navigate('/client/login')} 
+              className="bg-white text-green-600 hover:bg-gray-100 text-lg px-8 py-6"
             >
-              <Stethoscope className="h-5 w-5 mr-2" />
-              {t('landing.startProvider')}
+              <User className="h-5 w-5 mr-2" />
+              {t('landing.accessClientPortal')}
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={() => navigate('/client/login')} 
+              onClick={() => navigate('/provider/register')} 
               className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6"
             >
-              <User className="h-5 w-5 mr-2" />
-              {t('landing.accessClientPortal')}
+              <Stethoscope className="h-5 w-5 mr-2" />
+              {t('landing.startProvider')}
             </Button>
           </div>
         </div>
