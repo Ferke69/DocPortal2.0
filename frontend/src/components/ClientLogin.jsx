@@ -199,12 +199,12 @@ const ClientLogin = () => {
               )}
 
               <div>
-                <Label htmlFor="inviteCode">Invite Code from Your Provider</Label>
+                <Label htmlFor="inviteCode">{t('auth.inviteCodeFromProvider')}</Label>
                 <div className="relative mt-1">
                   <Input
                     id="inviteCode"
                     type="text"
-                    placeholder="Enter 8-character code"
+                    placeholder={t('auth.enterInviteCode')}
                     value={inviteCode}
                     onChange={(e) => {
                       const code = e.target.value.toUpperCase();
