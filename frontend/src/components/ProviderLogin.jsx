@@ -68,9 +68,9 @@ const ProviderLogin = () => {
             </div>
           </div>
           <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">DocPortal</div>
-          <CardTitle className="text-2xl dark:text-white">Provider Login</CardTitle>
+          <CardTitle className="text-2xl dark:text-white">{t('auth.providerLogin')}</CardTitle>
           <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
-            Access your practice management dashboard
+            {t('auth.accessPracticeDashboard')}
           </p>
         </CardHeader>
         <CardContent>
