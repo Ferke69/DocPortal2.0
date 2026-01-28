@@ -23,18 +23,18 @@ const LandingPage = () => {
               <LanguageSelector />
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/client/login')}
-                className="border-green-600 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/20"
-              >
-                <User className="h-4 w-4 mr-2" />
-                {t('landing.clientLogin')}
-              </Button>
-              <Button 
-                onClick={() => navigate('/provider/login')} 
-                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                onClick={() => navigate('/provider/login')}
+                className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20"
               >
                 <Stethoscope className="h-4 w-4 mr-2" />
                 {t('landing.providerLogin')}
+              </Button>
+              <Button 
+                onClick={() => navigate('/client/login')} 
+                className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
+              >
+                <User className="h-4 w-4 mr-2" />
+                {t('landing.clientLogin')}
               </Button>
             </div>
           </div>
