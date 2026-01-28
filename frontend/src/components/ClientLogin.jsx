@@ -114,9 +114,9 @@ const ClientLogin = () => {
             </div>
           </div>
           <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">DocPortal</div>
-          <CardTitle className="text-2xl dark:text-white">Client Portal</CardTitle>
+          <CardTitle className="text-2xl dark:text-white">{t('client.portal')}</CardTitle>
           <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
-            {showRegister ? 'Join your provider\'s practice' : 'Access your health portal'}
+            {showRegister ? t('auth.joinProviderPractice') : t('auth.accessHealthPortal')}
           </p>
         </CardHeader>
         <CardContent>
@@ -130,7 +130,7 @@ const ClientLogin = () => {
               }`}
               onClick={() => setShowRegister(false)}
             >
-              Sign In
+              {t('auth.signIn')}
             </button>
             <button
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
@@ -140,7 +140,7 @@ const ClientLogin = () => {
               }`}
               onClick={() => setShowRegister(true)}
             >
-              Have Invite Code?
+              {t('auth.haveInviteCode')}
             </button>
           </div>
 
