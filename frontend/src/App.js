@@ -197,6 +197,14 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/client/profile" 
+        element={
+          <ProtectedRoute requiredType="client">
+            <ClientProfile onBack={() => window.location.href = '/client/dashboard'} />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Catch all */}
       <Route path="*" element={<Navigate to="/" replace />} />
