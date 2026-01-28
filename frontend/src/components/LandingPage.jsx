@@ -213,37 +213,6 @@ const LandingPage = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
-            {/* Client Flow */}
-            <div>
-              <h3 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-6 flex items-center">
-                <User className="h-6 w-6 mr-2" />
-                {t('landing.forClients')}
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-4">
-                  <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step1Client')}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step1ClientDesc')}</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step2Client')}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step2ClientDesc')}</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Client')}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ClientDesc')}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Provider Flow */}
             <div>
               <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6 flex items-center">
@@ -270,6 +239,37 @@ const LandingPage = () => {
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Provider')}</p>
                     <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ProviderDesc')}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Client Flow */}
+            <div>
+              <h3 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-6 flex items-center">
+                <User className="h-6 w-6 mr-2" />
+                {t('landing.forClients')}
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step1Client')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step1ClientDesc')}</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step2Client')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step2ClientDesc')}</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{t('landing.step3Client')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{t('landing.step3ClientDesc')}</p>
                   </div>
                 </div>
               </div>
