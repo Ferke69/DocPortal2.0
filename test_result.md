@@ -350,3 +350,16 @@ agent_communication:
       Backend logs show consistent 200 OK responses for all API calls.
       
       The DocPortal authentication system is fully functional and ready for production use.
+
+  - agent: "main"
+    message: |
+      Implemented requested changes:
+      1. ✅ Swapped portal cards positions - Provider (blue) on left, Patient (green) on right
+      2. ✅ Removed "Pending Notes" card from Provider Dashboard overview
+      3. Messages and Appointments - Testing needed to verify backend functionality
+      
+      APIs to test:
+      - POST /api/messages - Send message between provider and client
+      - GET /api/messages - Get conversation messages
+      - POST /api/appointments - Create appointment
+      - GET /api/appointments/{id} - Get appointment details
