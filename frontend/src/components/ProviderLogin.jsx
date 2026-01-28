@@ -83,7 +83,7 @@ const ProviderLogin = () => {
             )}
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('auth.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -96,7 +96,7 @@ const ProviderLogin = () => {
             </div>
 
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('auth.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -113,7 +113,7 @@ const ProviderLogin = () => {
               className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign In as Provider'}
+              {loading ? t('auth.signingIn') : t('auth.signInAsProvider')}
             </Button>
           </form>
 
@@ -123,7 +123,7 @@ const ProviderLogin = () => {
                 <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Or continue with</span>
+                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">{t('auth.orContinueWith')}</span>
               </div>
             </div>
 
