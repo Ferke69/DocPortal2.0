@@ -129,9 +129,9 @@ const ClientProfile = ({ onBack }) => {
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" onClick={onBack}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                {t('common.back')}
               </Button>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('profile.myProfile')}</h1>
             </div>
             <div className="flex items-center space-x-2">
               <ThemeToggle />
@@ -173,7 +173,7 @@ const ClientProfile = ({ onBack }) => {
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            Profile
+            {t('profile.myProfile')}
           </button>
           <button
             onClick={() => setActiveTab('health')}
@@ -183,7 +183,7 @@ const ClientProfile = ({ onBack }) => {
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            Health Info
+            {t('profile.healthInfo')}
           </button>
           <button
             onClick={() => setActiveTab('settings')}
@@ -193,7 +193,7 @@ const ClientProfile = ({ onBack }) => {
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            Settings
+            {t('profile.settings')}
           </button>
         </div>
 
