@@ -27,7 +27,6 @@ const ProviderDashboard = ({ onNavigate }) => {
     monthlyIncome: 0,
     appointmentsToday: 0,
     appointmentsWeek: 0,
-    pendingNotes: 0,
     activeClients: 0,
     messagesUnread: 0,
     upcomingAppointments: 0
