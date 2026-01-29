@@ -12,20 +12,16 @@ import { Button } from './ui/button';
 const CurrencySelector = () => {
   const { t } = useTranslation();
   
-  // European currencies matching available languages
+  // Available currencies
   const currencies = [
-    { code: 'EUR', symbol: '€', name: t('currencies.EUR') },
-    { code: 'GBP', symbol: '£', name: t('currencies.GBP') },
-    { code: 'CHF', symbol: 'CHF', name: t('currencies.CHF') },
-    { code: 'PLN', symbol: 'zł', name: t('currencies.PLN') },
-    { code: 'CZK', symbol: 'Kč', name: t('currencies.CZK') },
-    { code: 'SEK', symbol: 'kr', name: t('currencies.SEK') },
-    { code: 'NOK', symbol: 'kr', name: t('currencies.NOK') },
-    { code: 'DKK', symbol: 'kr', name: t('currencies.DKK') },
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc' },
   ];
 
   const [selectedCurrency, setSelectedCurrency] = React.useState(() => {
-    return localStorage.getItem('currency') || 'EUR';
+    return localStorage.getItem('currency') || 'USD';
   });
 
   const currentCurrency = currencies.find(c => c.code === selectedCurrency) || currencies[0];
@@ -67,7 +63,7 @@ export default CurrencySelector;
 // Helper hook to get current currency
 export const useCurrency = () => {
   const [currency, setCurrency] = React.useState(() => {
-    return localStorage.getItem('currency') || 'EUR';
+    return localStorage.getItem('currency') || 'USD';
   });
 
   React.useEffect(() => {
@@ -79,25 +75,18 @@ export const useCurrency = () => {
   }, []);
 
   const currencySymbols = {
+    USD: '$',
     EUR: '€',
     GBP: '£',
-    CHF: 'CHF',
-    PLN: 'zł',
-    CZK: 'Kč',
-    SEK: 'kr',
-    NOK: 'kr',
-    DKK: 'kr'
+    CHF: 'CHF'
   };
 
   return {
     currency,
-    symbol: currencySymbols[currency] || '€',
+    symbol: currencySymbols[currency] || '$',
     formatPrice: (amount) => {
-      const symbol = currencySymbols[currency] || '€';
-      if (['EUR', 'GBP'].includes(currency)) {
-        return `${symbol}${amount}`;
-      }
-      return `${amount} ${symbol}`;
+      const symbol = currencySymbols[currency] || '$';
+      return `${symbol}${amount}`;
     }
   };
 };
