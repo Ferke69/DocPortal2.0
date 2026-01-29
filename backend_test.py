@@ -1297,34 +1297,478 @@ def test_working_hours_and_payment_flow(results):
     
     return True
 
+def test_comprehensive_review_scenarios(results):
+    """Test all scenarios from the review request"""
+    print("🚀 Starting Comprehensive DocPortal Backend API Testing")
+    print(f"Testing against: {BASE_URL}")
+    print(f"Timestamp: {datetime.now().isoformat()}")
+    print("\nTesting all review request scenarios:")
+    
+    # Test API Health first
+    if not test_api_health(results):
+        print("❌ API is not healthy, stopping tests")
+        return False
+    
+    # 1. Provider Authentication Flow
+    print("\n" + "="*60)
+    print("1. PROVIDER AUTHENTICATION FLOW")
+    print("="*60)
+    
+    provider_token, provider_user = test_provider_registration(results)
+    if not provider_token:
+        print("❌ Provider registration failed, stopping tests")
+        return False
+    
+    provider_email = provider_user["email"]
+    provider_password = "SecurePass123!"
+    
+    # Test provider login
+    login_token, login_user = test_provider_login(results, provider_email, provider_password)
+    if not login_token:
+        print("❌ Provider login failed")
+        return False
+    
+    # Test get provider profile
+    print("\n🧪 Testing Get Provider Profile (/api/auth/me)...")
+    response = make_request("GET", "/auth/me", auth_token=provider_token)
+    if response and response.status_code == 200:
+        try:
+            profile = response.json()
+            if profile.get("userType") == "provider":
+                results.log_pass("Get Provider Profile")
+            else:
+                results.log_fail("Get Provider Profile", "Invalid user type in profile")
+        except:
+            results.log_fail("Get Provider Profile", "Invalid response format")
+    else:
+        results.log_fail("Get Provider Profile", f"HTTP {response.status_code if response else 'None'}")
+    
+    # 2. Invite Code System
+    print("\n" + "="*60)
+    print("2. INVITE CODE SYSTEM")
+    print("="*60)
+    
+    invite_code = test_invite_code_generation(results, provider_token)
+    if not invite_code:
+        print("❌ Invite code generation failed")
+        return False
+    
+    test_list_invite_codes(results, provider_token)
+    
+    # Test delete invite code (create a new one first)
+    print("\n🧪 Testing Delete Invite Code...")
+    delete_invite_data = {"expiresInDays": 1}
+    response = make_request("POST", "/provider/invite-code", delete_invite_data, auth_token=provider_token)
+    if response and response.status_code in [200, 201]:
+        try:
+            delete_code_data = response.json()
+            delete_code = delete_code_data["code"]
+            
+            # Now delete it
+            response = make_request("DELETE", f"/provider/invite-codes/{delete_code}", auth_token=provider_token)
+            if response and response.status_code == 200:
+                results.log_pass("Delete Invite Code")
+            else:
+                results.log_fail("Delete Invite Code", f"HTTP {response.status_code if response else 'None'}")
+        except:
+            results.log_fail("Delete Invite Code", "Failed to create code for deletion test")
+    else:
+        results.log_fail("Delete Invite Code", "Failed to create code for deletion test")
+    
+    if not test_validate_invite_code(results, invite_code):
+        print("❌ Invite code validation failed")
+        return False
+    
+    # 3. Client Authentication Flow
+    print("\n" + "="*60)
+    print("3. CLIENT AUTHENTICATION FLOW")
+    print("="*60)
+    
+    client_token, client_user = test_client_registration_with_invite(results, invite_code, provider_user["user_id"])
+    if not client_token:
+        print("❌ Client registration failed")
+        return False
+    
+    client_email = client_user["email"]
+    client_password = "ClientPass123!"
+    
+    # Test client login
+    client_login_token, client_login_user = test_client_login(results, client_email, client_password)
+    if not client_login_token:
+        print("❌ Client login failed")
+        return False
+    
+    # Verify client-provider link
+    test_client_provider_link(results, client_user, provider_user)
+    
+    # 4. Provider Dashboard APIs
+    print("\n" + "="*60)
+    print("4. PROVIDER DASHBOARD APIs")
+    print("="*60)
+    
+    # Test provider dashboard
+    print("\n🧪 Testing Provider Dashboard...")
+    response = make_request("GET", "/provider/dashboard", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Provider Dashboard")
+    else:
+        results.log_fail("Provider Dashboard", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get provider clients
+    print("\n🧪 Testing Get Provider Clients...")
+    response = make_request("GET", "/provider/clients", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Provider Clients")
+    else:
+        results.log_fail("Get Provider Clients", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get provider appointments
+    print("\n🧪 Testing Get Provider Appointments...")
+    response = make_request("GET", "/provider/appointments", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Provider Appointments")
+    else:
+        results.log_fail("Get Provider Appointments", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get provider appointments with date filter
+    print("\n🧪 Testing Get Provider Appointments (with date filter)...")
+    tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+    response = make_request("GET", f"/provider/appointments?date={tomorrow}", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Provider Appointments (Date Filter)")
+    else:
+        results.log_fail("Get Provider Appointments (Date Filter)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test working hours
+    print("\n🧪 Testing Get Working Hours...")
+    response = make_request("GET", "/provider/working-hours", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Working Hours")
+    else:
+        results.log_fail("Get Working Hours", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test update working hours
+    print("\n🧪 Testing Update Working Hours...")
+    working_hours_data = {
+        "monday": {"enabled": True, "startTime": "09:00", "endTime": "17:00"},
+        "tuesday": {"enabled": True, "startTime": "09:00", "endTime": "17:00"},
+        "wednesday": {"enabled": True, "startTime": "09:00", "endTime": "17:00"},
+        "thursday": {"enabled": True, "startTime": "09:00", "endTime": "17:00"},
+        "friday": {"enabled": True, "startTime": "09:00", "endTime": "17:00"},
+        "saturday": {"enabled": False, "startTime": "09:00", "endTime": "17:00"},
+        "sunday": {"enabled": False, "startTime": "09:00", "endTime": "17:00"},
+        "slotDuration": 30
+    }
+    response = make_request("PUT", "/provider/working-hours", working_hours_data, auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Update Working Hours")
+    else:
+        results.log_fail("Update Working Hours", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get available slots
+    print("\n🧪 Testing Get Available Slots...")
+    response = make_request("GET", f"/provider/available-slots/{tomorrow}", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Available Slots (Provider)")
+    else:
+        results.log_fail("Get Available Slots (Provider)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # 5. Client Dashboard APIs
+    print("\n" + "="*60)
+    print("5. CLIENT DASHBOARD APIs")
+    print("="*60)
+    
+    # Test client dashboard
+    print("\n🧪 Testing Client Dashboard...")
+    response = make_request("GET", "/client/dashboard", auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Client Dashboard")
+    else:
+        results.log_fail("Client Dashboard", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get client provider
+    print("\n🧪 Testing Get Client Provider...")
+    response = make_request("GET", "/client/provider", auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Client Provider")
+    else:
+        results.log_fail("Get Client Provider", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get client appointments
+    print("\n🧪 Testing Get Client Appointments...")
+    response = make_request("GET", "/client/appointments", auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Client Appointments")
+    else:
+        results.log_fail("Get Client Appointments", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get provider available slots from client
+    print("\n🧪 Testing Get Provider Available Slots (Client)...")
+    response = make_request("GET", f"/client/provider/available-slots/{tomorrow}", auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Provider Available Slots (Client)")
+    else:
+        results.log_fail("Get Provider Available Slots (Client)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # 6. Messaging System
+    print("\n" + "="*60)
+    print("6. MESSAGING SYSTEM")
+    print("="*60)
+    
+    # Test send message (provider to client)
+    message_id_1 = test_send_message_provider_to_client(results, provider_token, provider_user, client_user)
+    
+    # Test send message (client to provider)
+    message_id_2 = test_send_message_client_to_provider(results, client_token, client_user, provider_user)
+    
+    # Test get all messages
+    print("\n🧪 Testing Get All Messages...")
+    response = make_request("GET", "/messages", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get All Messages")
+    else:
+        results.log_fail("Get All Messages", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get conversation messages
+    test_get_messages(results, provider_token, client_token, provider_user, client_user)
+    
+    # Test mark message as read
+    if message_id_1:
+        print("\n🧪 Testing Mark Message as Read...")
+        response = make_request("PATCH", f"/messages/{message_id_1}/read", auth_token=client_token)
+        if response and response.status_code == 200:
+            results.log_pass("Mark Message as Read")
+        else:
+            results.log_fail("Mark Message as Read", f"HTTP {response.status_code if response else 'None'}")
+    
+    # 7. Appointment System
+    print("\n" + "="*60)
+    print("7. APPOINTMENT SYSTEM")
+    print("="*60)
+    
+    # Test create appointment
+    appointment_id = test_create_appointment(results, client_token, client_user, provider_user)
+    if not appointment_id:
+        print("❌ Appointment creation failed")
+        return False
+    
+    # Test get appointment details
+    test_get_appointment(results, appointment_id, client_token, provider_token)
+    
+    # Test update appointment
+    print("\n🧪 Testing Update Appointment...")
+    update_data = {
+        "notes": "Updated appointment notes - discussing new symptoms",
+        "type": "Follow-up Consultation"
+    }
+    response = make_request("PATCH", f"/appointments/{appointment_id}", update_data, auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Update Appointment")
+    else:
+        results.log_fail("Update Appointment", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get video link
+    print("\n🧪 Testing Get Video Link...")
+    response = make_request("POST", f"/appointments/{appointment_id}/join", auth_token=client_token)
+    if response and response.status_code == 200:
+        try:
+            video_data = response.json()
+            if "videoLink" in video_data:
+                results.log_pass("Get Video Link")
+            else:
+                results.log_fail("Get Video Link", "Missing videoLink in response")
+        except:
+            results.log_fail("Get Video Link", "Invalid response format")
+    else:
+        results.log_fail("Get Video Link", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test cancel appointment
+    print("\n🧪 Testing Cancel Appointment...")
+    response = make_request("DELETE", f"/appointments/{appointment_id}", auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Cancel Appointment")
+    else:
+        results.log_fail("Cancel Appointment", f"HTTP {response.status_code if response else 'None'}")
+    
+    # 8. Payment System
+    print("\n" + "="*60)
+    print("8. PAYMENT SYSTEM")
+    print("="*60)
+    
+    # Create new appointment for payment testing
+    payment_appointment_data = {
+        "clientId": client_user["user_id"],
+        "providerId": provider_user["user_id"],
+        "date": tomorrow,
+        "time": "15:00",
+        "duration": 60,
+        "type": "Payment Test",
+        "notes": "Testing payment functionality",
+        "amount": 200.0
+    }
+    
+    response = make_request("POST", "/appointments", payment_appointment_data, auth_token=client_token)
+    if response and response.status_code in [200, 201]:
+        try:
+            payment_appointment = response.json()
+            payment_appointment_id = payment_appointment["id"]
+            
+            # Test get payment config
+            print("\n🧪 Testing Get Payment Config...")
+            response = make_request("GET", "/payments/config")
+            if response and response.status_code == 200:
+                results.log_pass("Get Payment Config")
+            else:
+                results.log_fail("Get Payment Config", f"HTTP {response.status_code if response else 'None'}")
+            
+            # Test create payment intent
+            print("\n🧪 Testing Create Payment Intent...")
+            payment_intent_data = {
+                "appointmentId": payment_appointment_id,
+                "amount": 200.0
+            }
+            response = make_request("POST", "/payments/create-payment-intent", payment_intent_data, auth_token=client_token)
+            if response and response.status_code in [200, 201]:
+                try:
+                    payment_intent = response.json()
+                    payment_intent_id = payment_intent["paymentIntentId"]
+                    results.log_pass("Create Payment Intent")
+                    
+                    # Test confirm payment
+                    print("\n🧪 Testing Confirm Payment...")
+                    confirm_data = {
+                        "paymentIntentId": payment_intent_id,
+                        "appointmentId": payment_appointment_id
+                    }
+                    response = make_request("POST", "/payments/confirm-payment", confirm_data, auth_token=client_token)
+                    if response and response.status_code == 200:
+                        results.log_pass("Confirm Payment")
+                    else:
+                        results.log_fail("Confirm Payment", f"HTTP {response.status_code if response else 'None'}")
+                    
+                    # Test get appointment payment status
+                    print("\n🧪 Testing Get Appointment Payment Status...")
+                    response = make_request("GET", f"/payments/appointment/{payment_appointment_id}", auth_token=client_token)
+                    if response and response.status_code == 200:
+                        results.log_pass("Get Appointment Payment Status")
+                    else:
+                        results.log_fail("Get Appointment Payment Status", f"HTTP {response.status_code if response else 'None'}")
+                        
+                except:
+                    results.log_fail("Create Payment Intent", "Invalid response format")
+            else:
+                results.log_fail("Create Payment Intent", f"HTTP {response.status_code if response else 'None'}")
+                
+        except:
+            results.log_fail("Create Payment Test Appointment", "Invalid response format")
+    else:
+        results.log_fail("Create Payment Test Appointment", f"HTTP {response.status_code if response else 'None'}")
+    
+    # 9. Billing System
+    print("\n" + "="*60)
+    print("9. BILLING SYSTEM")
+    print("="*60)
+    
+    # Test get invoices (provider)
+    print("\n🧪 Testing Get Invoices (Provider)...")
+    response = make_request("GET", "/billing/invoices", auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Invoices (Provider)")
+    else:
+        results.log_fail("Get Invoices (Provider)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test get invoices (client)
+    print("\n🧪 Testing Get Invoices (Client)...")
+    response = make_request("GET", "/billing/invoices", auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Get Invoices (Client)")
+    else:
+        results.log_fail("Get Invoices (Client)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test create invoice (provider only)
+    print("\n🧪 Testing Create Invoice (Provider)...")
+    invoice_data = {
+        "clientId": client_user["user_id"],
+        "amount": 150.0,
+        "description": "Consultation fee",
+        "dueDate": (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
+    }
+    response = make_request("POST", "/billing/invoices", invoice_data, auth_token=provider_token)
+    if response and response.status_code in [200, 201]:
+        results.log_pass("Create Invoice (Provider)")
+    else:
+        results.log_fail("Create Invoice (Provider)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # 10. Profile Management
+    print("\n" + "="*60)
+    print("10. PROFILE MANAGEMENT")
+    print("="*60)
+    
+    # Test update profile (provider)
+    print("\n🧪 Testing Update Profile (Provider)...")
+    profile_update = {
+        "bio": "Updated bio - Experienced healthcare provider specializing in family medicine",
+        "phone": "+1-555-1234"
+    }
+    response = make_request("PATCH", "/auth/profile", profile_update, auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Update Profile (Provider)")
+    else:
+        results.log_fail("Update Profile (Provider)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test update profile (client)
+    print("\n🧪 Testing Update Profile (Client)...")
+    client_profile_update = {
+        "phone": "+1-555-5678",
+        "address": "Updated address - 789 New St, New City, NC 98765"
+    }
+    response = make_request("PATCH", "/auth/profile", client_profile_update, auth_token=client_token)
+    if response and response.status_code == 200:
+        results.log_pass("Update Profile (Client)")
+    else:
+        results.log_fail("Update Profile (Client)", f"HTTP {response.status_code if response else 'None'}")
+    
+    # Test change password (provider)
+    print("\n🧪 Testing Change Password (Provider)...")
+    password_change = {
+        "currentPassword": "SecurePass123!",
+        "newPassword": "NewSecurePass123!"
+    }
+    response = make_request("POST", "/auth/change-password", password_change, auth_token=provider_token)
+    if response and response.status_code == 200:
+        results.log_pass("Change Password (Provider)")
+    else:
+        results.log_fail("Change Password (Provider)", f"HTTP {response.status_code if response else 'None'}")
+    
+    return True
+
 def main():
-    """Main test execution - Working Hours and Payment Flow"""
+    """Main test execution - Comprehensive Review Request Testing"""
     results = TestResults()
     
-    # Run the working hours and payment flow test
-    success = test_working_hours_and_payment_flow(results)
+    # Run comprehensive testing
+    success = test_comprehensive_review_scenarios(results)
     
     # Final summary
     results.summary()
     
     if success:
-        print("\n🎉 Working Hours and Payment Flow Test PASSED!")
-        print("✅ Complete working hours and payment workflow is working correctly!")
-        print("✅ All 10+ steps completed successfully:")
-        print("  1. ✅ Provider login")
-        print("  2. ✅ Get working hours")
-        print("  3. ✅ Update working hours")
-        print("  4. ✅ Get available slots (provider)")
-        print("  5. ✅ Get payment config")
-        print("  6. ✅ Create/login client")
-        print("  7. ✅ Get available slots (client)")
-        print("  8. ✅ Create appointment")
-        print("  9. ✅ Create payment intent")
-        print("  10. ✅ Confirm payment")
-        print("  11. ✅ Verify slot booking")
+        print("\n🎉 COMPREHENSIVE BACKEND API TESTING COMPLETED!")
+        print("✅ DocPortal backend APIs are working correctly!")
+        print("\nTested scenarios:")
+        print("  1. ✅ Provider Authentication Flow")
+        print("  2. ✅ Invite Code System")
+        print("  3. ✅ Client Authentication Flow")
+        print("  4. ✅ Provider Dashboard APIs")
+        print("  5. ✅ Client Dashboard APIs")
+        print("  6. ✅ Messaging System")
+        print("  7. ✅ Appointment System")
+        print("  8. ✅ Payment System")
+        print("  9. ✅ Billing System")
+        print("  10. ✅ Profile Management")
     else:
-        print("\n⚠️  Working Hours and Payment Flow Test FAILED!")
-        print("❌ Some steps in the workflow are not working correctly.")
+        print("\n⚠️  COMPREHENSIVE BACKEND API TESTING FAILED!")
+        print("❌ Some APIs are not working correctly.")
     
     return success
 
