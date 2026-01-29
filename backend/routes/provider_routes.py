@@ -260,3 +260,148 @@ async def get_clinical_note(
     
     await log_audit(provider_id, "view", "clinical_note", appointment_id)
     return note
+
+
+
+# ==================== Working Hours Management ====================
+
+@router.get("/working-hours")
+async def get_working_hours(current_user: dict = Depends(get_current_provider)):
+    """Get provider's working hours schedule"""
+    provider_id = current_user["userId"]
+    
+    schedule = await working_hours_collection.find_one(
+        {"providerId": provider_id},
+        {"_id": 0, "providerId": 0}
+    )
+    
+    if not schedule:
+        # Return default working hours if none set
+        default_schedule = WorkingHours()
+        return default_schedule.model_dump()
+    
+    return schedule
+
+@router.put("/working-hours")
+async def update_working_hours(
+    hours: WorkingHours,
+    current_user: dict = Depends(get_current_provider)
+):
+    """Update provider's working hours schedule"""
+    provider_id = current_user["userId"]
+    
+    schedule_dict = hours.model_dump()
+    schedule_dict["providerId"] = provider_id
+    schedule_dict["updatedAt"] = datetime.now(timezone.utc)
+    
+    # Upsert the working hours
+    await working_hours_collection.update_one(
+        {"providerId": provider_id},
+        {"$set": schedule_dict},
+        upsert=True
+    )
+    
+    await log_audit(provider_id, "update", "working_hours", provider_id)
+    
+    return {"message": "Working hours updated successfully"}
+
+@router.get("/available-slots/{date_str}")
+async def get_available_slots(
+    date_str: str,
+    current_user: dict = Depends(get_current_provider)
+):
+    """Get available time slots for a specific date"""
+    provider_id = current_user["userId"]
+    
+    return await _get_provider_available_slots(provider_id, date_str)
+
+async def _get_provider_available_slots(provider_id: str, date_str: str):
+    """Internal function to get available slots for a provider on a date"""
+    try:
+        target_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+    
+    # Don't allow booking in the past
+    if target_date < date.today():
+        return {"slots": [], "message": "Cannot book appointments in the past"}
+    
+    # Get provider's working hours
+    schedule = await working_hours_collection.find_one({"providerId": provider_id})
+    
+    if not schedule:
+        # Use default schedule
+        schedule = WorkingHours().model_dump()
+    
+    # Get day of week
+    day_names = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    day_name = day_names[target_date.weekday()]
+    
+    day_schedule = schedule.get(day_name, {})
+    
+    if not day_schedule.get('enabled', False):
+        return {"slots": [], "message": f"Provider is not available on {day_name.capitalize()}"}
+    
+    # Get slot duration
+    slot_duration = schedule.get('slotDuration', 60)
+    
+    # Generate time slots
+    start_time = datetime.strptime(day_schedule['startTime'], "%H:%M")
+    end_time = datetime.strptime(day_schedule['endTime'], "%H:%M")
+    
+    # Get break times if set
+    break_start = None
+    break_end = None
+    if day_schedule.get('breakStart') and day_schedule.get('breakEnd'):
+        break_start = datetime.strptime(day_schedule['breakStart'], "%H:%M")
+        break_end = datetime.strptime(day_schedule['breakEnd'], "%H:%M")
+    
+    # Get existing appointments for this date
+    existing_appointments = await appointments_collection.find({
+        "providerId": provider_id,
+        "date": date_str,
+        "status": {"$nin": ["cancelled"]}
+    }).to_list(None)
+    
+    booked_times = set()
+    for apt in existing_appointments:
+        booked_times.add(apt['time'])
+    
+    # Generate available slots
+    slots = []
+    current_time = start_time
+    
+    while current_time + timedelta(minutes=slot_duration) <= end_time:
+        time_str = current_time.strftime("%I:%M %p")
+        time_24h = current_time.strftime("%H:%M")
+        
+        # Check if slot is during break
+        is_break = False
+        if break_start and break_end:
+            if break_start <= current_time < break_end:
+                is_break = True
+        
+        # Check if slot is already booked
+        is_booked = time_str in booked_times
+        
+        if not is_break and not is_booked:
+            # For today, don't show past times
+            if target_date == date.today():
+                now = datetime.now()
+                slot_datetime = datetime.combine(target_date, current_time.time())
+                if slot_datetime > now:
+                    slots.append({
+                        "time": time_str,
+                        "time24h": time_24h,
+                        "available": True
+                    })
+            else:
+                slots.append({
+                    "time": time_str,
+                    "time24h": time_24h,
+                    "available": True
+                })
+        
+        current_time += timedelta(minutes=slot_duration)
+    
+    return {"slots": slots, "slotDuration": slot_duration}
