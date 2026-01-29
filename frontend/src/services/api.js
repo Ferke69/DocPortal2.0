@@ -55,7 +55,8 @@ export const clientApi = {
     const params = {};
     if (status) params.status = status;
     return api.get('/client/appointments', { params });
-  }
+  },
+  getAvailableSlots: (date) => api.get(`/client/provider/available-slots/${date}`)
 };
 
 // Appointments API
