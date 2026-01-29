@@ -242,3 +242,40 @@ class ClientDashboardStats(BaseModel):
     pendingPayments: int
     unreadMessages: int
     completedSessions: int
+
+# Working Hours Models
+class DaySchedule(BaseModel):
+    enabled: bool = False
+    startTime: str = "09:00"  # 24-hour format
+    endTime: str = "17:00"
+    breakStart: Optional[str] = None  # Optional break time
+    breakEnd: Optional[str] = None
+
+class WorkingHours(BaseModel):
+    monday: DaySchedule = DaySchedule(enabled=True)
+    tuesday: DaySchedule = DaySchedule(enabled=True)
+    wednesday: DaySchedule = DaySchedule(enabled=True)
+    thursday: DaySchedule = DaySchedule(enabled=True)
+    friday: DaySchedule = DaySchedule(enabled=True)
+    saturday: DaySchedule = DaySchedule(enabled=False)
+    sunday: DaySchedule = DaySchedule(enabled=False)
+    slotDuration: int = 60  # Default appointment duration in minutes
+
+class WorkingHoursUpdate(BaseModel):
+    monday: Optional[DaySchedule] = None
+    tuesday: Optional[DaySchedule] = None
+    wednesday: Optional[DaySchedule] = None
+    thursday: Optional[DaySchedule] = None
+    friday: Optional[DaySchedule] = None
+    saturday: Optional[DaySchedule] = None
+    sunday: Optional[DaySchedule] = None
+    slotDuration: Optional[int] = None
+
+# Payment Models
+class PaymentIntentCreate(BaseModel):
+    appointmentId: str
+    amount: float
+
+class PaymentConfirm(BaseModel):
+    paymentIntentId: str
+    appointmentId: str
