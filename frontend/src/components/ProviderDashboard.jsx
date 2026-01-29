@@ -16,6 +16,7 @@ import { providerApi, messagesApi, billingApi } from '../services/api';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
 import ScheduleSettings from './ScheduleSettings';
+import { useCurrency } from './CurrencySelector';
 import api from '../services/api';
 
 const ProviderDashboard = ({ onNavigate }) => {
