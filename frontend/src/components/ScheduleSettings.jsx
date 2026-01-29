@@ -135,8 +135,7 @@ const ScheduleSettings = ({ onBack }) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Schedule Settings</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Set your available working days and hours</p>
+          <p className="text-gray-600 dark:text-gray-400">Set your available working days and hours</p>
         </div>
         <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700">
           <Save className="h-4 w-4 mr-2" />
