@@ -757,72 +757,235 @@ def test_get_appointment(results, appointment_id, client_token, provider_token):
     
     return False
 
-def main():
-    """Main test execution - Messaging and Appointment Flow"""
-    print("🚀 Starting DocPortal Backend API Tests - Messaging & Appointments")
+def test_review_request_scenario(results):
+    """Test the specific review request scenario"""
+    print("🚀 Starting Review Request Scenario Test")
     print(f"Testing against: {BASE_URL}")
     print(f"Timestamp: {datetime.now().isoformat()}")
-    print("\nTesting complete messaging and appointment flow:")
-    print("1. Create provider account and login")
-    print("2. Generate invite code")
-    print("3. Create client account using invite code")
-    print("4. Send message from provider to client")
-    print("5. Send message from client to provider")
-    print("6. Get all messages to verify they are saved")
-    print("7. Create appointment from client")
-    print("8. Get appointment details and verify video link")
-    
-    results = TestResults()
+    print("\nTesting complete provider-client workflow:")
+    print("1. Login as provider: testdoctor85487@example.com")
+    print("2. Generate a new invite code if needed")
+    print("3. Register a new client using that invite code")
+    print("4. Login as the client")
+    print("5. Send a message from client to provider")
+    print("6. Get provider's messages to verify")
+    print("7. Book an appointment as the client")
+    print("8. Verify the appointment appears")
     
     # Test API Health first
     if not test_api_health(results):
         print("❌ API is not healthy, stopping tests")
         return False
     
-    # Step 1: Create and login provider
-    provider_token, provider_user = test_provider_registration(results)
-    if not provider_token:
-        print("❌ Provider registration failed, stopping tests")
+    # Step 1: Login as the specific provider
+    print("\n🧪 Step 1: Login as provider testdoctor85487@example.com...")
+    login_data = {
+        "email": "testdoctor85487@example.com",
+        "password": "TestPass123!"
+    }
+    
+    response = make_request("POST", "/auth/login", login_data)
+    if not response or response.status_code != 200:
+        results.log_fail("Provider Login (testdoctor85487@example.com)", "Login failed - provider may not exist")
+        return False
+    
+    try:
+        provider_data = response.json()
+        provider_token = provider_data["token"]
+        provider_user = provider_data["user"]
+        results.log_pass("Provider Login (testdoctor85487@example.com)")
+    except:
+        results.log_fail("Provider Login (testdoctor85487@example.com)", "Invalid response format")
         return False
     
     # Step 2: Generate invite code
+    print("\n🧪 Step 2: Generate invite code...")
     invite_code = test_invite_code_generation(results, provider_token)
     if not invite_code:
         print("❌ Invite code generation failed, stopping tests")
         return False
     
-    # Step 3: Create and login client with invite code
-    client_token, client_user = test_client_registration_with_invite(results, invite_code, provider_user["user_id"])
-    if not client_token:
-        print("❌ Client registration failed, stopping tests")
+    # Step 3: Register new client with invite code
+    print("\n🧪 Step 3: Register new client with invite code...")
+    client_email = f"newclient_{int(time.time())}@example.com"
+    client_password = "ClientPass123!"
+    
+    client_data = {
+        "email": client_email,
+        "password": client_password,
+        "name": "Test Client User",
+        "userType": "client",
+        "phone": "+1-555-9999",
+        "dateOfBirth": "1990-05-15",
+        "address": "456 Test St, Test City, TC 54321",
+        "insurance": "Test Insurance",
+        "inviteCode": invite_code,
+        "emergencyContact": {
+            "name": "Emergency Contact",
+            "phone": "+1-555-8888",
+            "relationship": "Friend"
+        }
+    }
+    
+    response = make_request("POST", "/auth/register", client_data)
+    if not response or (response.status_code != 200 and response.status_code != 201):
+        results.log_fail("Client Registration with Invite Code", "Registration failed")
         return False
     
-    # Step 4: Send message from provider to client
-    message_id_1 = test_send_message_provider_to_client(results, provider_token, provider_user, client_user)
+    try:
+        client_reg_data = response.json()
+        results.log_pass("Client Registration with Invite Code")
+    except:
+        results.log_fail("Client Registration with Invite Code", "Invalid response format")
+        return False
+    
+    # Step 4: Login as the client
+    print("\n🧪 Step 4: Login as the client...")
+    client_login_data = {
+        "email": client_email,
+        "password": client_password
+    }
+    
+    response = make_request("POST", "/auth/login", client_login_data)
+    if not response or response.status_code != 200:
+        results.log_fail("Client Login", "Login failed")
+        return False
+    
+    try:
+        client_data = response.json()
+        client_token = client_data["token"]
+        client_user = client_data["user"]
+        results.log_pass("Client Login")
+    except:
+        results.log_fail("Client Login", "Invalid response format")
+        return False
     
     # Step 5: Send message from client to provider
-    message_id_2 = test_send_message_client_to_provider(results, client_token, client_user, provider_user)
+    print("\n🧪 Step 5: Send message from client to provider...")
+    message_data = {
+        "senderId": client_user["user_id"],
+        "receiverId": provider_user["user_id"],
+        "senderType": "client",
+        "message": "Hello Dr. Johnson! I hope you're doing well. I wanted to reach out about scheduling our next appointment and discuss my recent symptoms."
+    }
     
-    # Step 6: Get messages to verify they are saved
-    test_get_messages(results, provider_token, client_token, provider_user, client_user)
+    response = make_request("POST", "/messages", message_data, auth_token=client_token)
+    if not response or (response.status_code != 200 and response.status_code != 201):
+        results.log_fail("Send Message (Client to Provider)", "Message sending failed")
+        return False
     
-    # Step 7: Create appointment from client
-    appointment_id = test_create_appointment(results, client_token, client_user, provider_user)
+    try:
+        message_response = response.json()
+        results.log_pass("Send Message (Client to Provider)")
+    except:
+        results.log_fail("Send Message (Client to Provider)", "Invalid response format")
+        return False
     
-    # Step 8: Get appointment details and verify video link
-    if appointment_id:
-        test_get_appointment(results, appointment_id, client_token, provider_token)
-    else:
-        results.log_fail("Get Appointment", "Skipped due to appointment creation failure")
+    # Step 6: Get provider's messages to verify
+    print("\n🧪 Step 6: Get provider's messages to verify...")
+    response = make_request("GET", f"/messages?conversationWith={client_user['user_id']}", auth_token=provider_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Get Provider Messages", "Failed to retrieve messages")
+        return False
+    
+    try:
+        messages = response.json()
+        if isinstance(messages, list) and len(messages) > 0:
+            results.log_pass("Get Provider Messages")
+            print(f"  ✓ Found {len(messages)} message(s) in conversation")
+        else:
+            results.log_fail("Get Provider Messages", "No messages found")
+            return False
+    except:
+        results.log_fail("Get Provider Messages", "Invalid response format")
+        return False
+    
+    # Step 7: Book appointment as client
+    print("\n🧪 Step 7: Book appointment as client...")
+    appointment_data = {
+        "clientId": client_user["user_id"],
+        "providerId": provider_user["user_id"],
+        "date": "2025-01-25",
+        "time": "10:00",
+        "duration": 60,
+        "type": "Follow-up Consultation",
+        "notes": "Follow-up appointment to discuss treatment progress and review test results",
+        "amount": 200.0
+    }
+    
+    response = make_request("POST", "/appointments", appointment_data, auth_token=client_token)
+    if not response or (response.status_code != 200 and response.status_code != 201):
+        results.log_fail("Create Appointment", "Appointment booking failed")
+        return False
+    
+    try:
+        appointment_response = response.json()
+        appointment_id = appointment_response["id"]
+        results.log_pass("Create Appointment")
+        print(f"  ✓ Appointment ID: {appointment_id}")
+        print(f"  ✓ Video Link: {appointment_response.get('videoLink', 'N/A')}")
+    except:
+        results.log_fail("Create Appointment", "Invalid response format")
+        return False
+    
+    # Step 8: Verify appointment appears
+    print("\n🧪 Step 8: Verify appointment appears...")
+    
+    # Check from client perspective
+    response = make_request("GET", f"/appointments/{appointment_id}", auth_token=client_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Verify Appointment (Client)", "Failed to retrieve appointment")
+        return False
+    
+    try:
+        client_appointment = response.json()
+        results.log_pass("Verify Appointment (Client)")
+    except:
+        results.log_fail("Verify Appointment (Client)", "Invalid response format")
+        return False
+    
+    # Check from provider perspective
+    response = make_request("GET", f"/appointments/{appointment_id}", auth_token=provider_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Verify Appointment (Provider)", "Failed to retrieve appointment")
+        return False
+    
+    try:
+        provider_appointment = response.json()
+        results.log_pass("Verify Appointment (Provider)")
+        print(f"  ✓ Status: {provider_appointment.get('status', 'N/A')}")
+        print(f"  ✓ Date/Time: {provider_appointment.get('date', 'N/A')} at {provider_appointment.get('time', 'N/A')}")
+    except:
+        results.log_fail("Verify Appointment (Provider)", "Invalid response format")
+        return False
+    
+    return True
+
+def main():
+    """Main test execution - Review Request Scenario"""
+    results = TestResults()
+    
+    # Run the specific review request scenario
+    success = test_review_request_scenario(results)
     
     # Final summary
-    success = results.summary()
+    results.summary()
     
     if success:
-        print("\n🎉 All messaging and appointment tests passed!")
-        print("✅ Complete provider-client communication flow is working!")
+        print("\n🎉 Review Request Scenario Test PASSED!")
+        print("✅ Complete provider-client workflow is working correctly!")
+        print("✅ All 8 steps completed successfully:")
+        print("  1. ✅ Provider login")
+        print("  2. ✅ Invite code generation")
+        print("  3. ✅ Client registration with invite code")
+        print("  4. ✅ Client login")
+        print("  5. ✅ Message sending (client → provider)")
+        print("  6. ✅ Message retrieval (provider)")
+        print("  7. ✅ Appointment booking (client)")
+        print("  8. ✅ Appointment verification (both sides)")
     else:
-        print("\n⚠️  Some tests failed. Please check the errors above.")
+        print("\n⚠️  Review Request Scenario Test FAILED!")
+        print("❌ Some steps in the workflow are not working correctly.")
     
     return success
 
