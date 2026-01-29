@@ -479,18 +479,64 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
                   </div>
                 </div>
 
-                {/* Book Button */}
-                <Button 
-                  className="w-full bg-green-600 hover:bg-green-700 text-lg py-6" 
-                  onClick={handleBookAppointment}
-                  disabled={!selectedDate || !selectedTime || !selectedProvider || booking}
-                >
-                  {booking ? 'Booking...' : 'Book Appointment'}
-                </Button>
+                {/* Payment Step */}
+                {paymentStep && createdAppointment ? (
+                  <div className="space-y-4">
+                    <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <span className="font-medium text-green-800 dark:text-green-200">Appointment Reserved</span>
+                      </div>
+                      <p className="text-sm text-green-700 dark:text-green-300">
+                        Complete payment to confirm your booking
+                      </p>
+                    </div>
 
-                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                  Payment will be processed after the appointment. You can cancel up to 24 hours in advance.
-                </p>
+                    {paymentConfig && !paymentConfig.configured && (
+                      <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                        <div className="flex items-start space-x-2">
+                          <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
+                          <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                            Demo mode: Payment will be simulated. See STRIPE_SETUP_GUIDE.md to enable real payments.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <Button 
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6" 
+                      onClick={handlePayment}
+                      disabled={paymentProcessing}
+                    >
+                      <CreditCard className="h-5 w-5 mr-2" />
+                      {paymentProcessing ? 'Processing...' : `Pay $${selectedAppointmentType?.price}`}
+                    </Button>
+
+                    <Button 
+                      variant="outline"
+                      className="w-full dark:border-gray-600 dark:text-gray-300" 
+                      onClick={handleCancelPayment}
+                      disabled={paymentProcessing}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    {/* Book Button */}
+                    <Button 
+                      className="w-full bg-green-600 hover:bg-green-700 text-lg py-6" 
+                      onClick={handleBookAppointment}
+                      disabled={!selectedDate || !selectedTime || !selectedProvider || booking}
+                    >
+                      {booking ? 'Creating Appointment...' : 'Book & Pay'}
+                    </Button>
+
+                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                      Payment is required to confirm your appointment. You can cancel up to 24 hours in advance.
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
