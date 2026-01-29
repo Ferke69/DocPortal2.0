@@ -138,18 +138,20 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
         duration: selectedAppointmentType?.duration || 60,
         type: appointmentType,
         amount: selectedAppointmentType?.price || 150,
-        notes: ''
+        notes: '',
+        paymentStatus: 'pending'
       };
 
       const response = await appointmentsApi.create(appointmentData);
       
+      // Store appointment and proceed to payment
+      setCreatedAppointment(response.data);
+      setPaymentStep(true);
+      
       toast({
-        title: "Appointment booked!",
-        description: `Your appointment on ${selectedDate.toLocaleDateString()} at ${selectedTime} has been confirmed. Video link: ${response.data.videoLink}`,
+        title: "Appointment created",
+        description: "Please complete payment to confirm your booking.",
       });
-
-      // Reset form
-      setSelectedTime(null);
       
     } catch (err) {
       console.error('Error booking appointment:', err);
@@ -163,12 +165,83 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
     }
   };
 
+  const handlePayment = async () => {
+    if (!createdAppointment) return;
+
+    try {
+      setPaymentProcessing(true);
+      const selectedAppointmentType = appointmentTypes.find(apt => apt.value === appointmentType);
+      const amount = selectedAppointmentType?.price || 150;
+
+      // Create payment intent
+      const paymentResponse = await paymentsApi.createPaymentIntent(createdAppointment._id, amount);
+      
+      if (paymentResponse.data.mockMode) {
+        // Mock mode - simulate payment
+        toast({
+          title: "Demo Mode",
+          description: "Stripe not configured. Simulating payment...",
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+      
+      // Confirm payment
+      const confirmResponse = await paymentsApi.confirmPayment(
+        paymentResponse.data.paymentIntentId,
+        createdAppointment._id
+      );
+      
+      toast({
+        title: "Payment successful!",
+        description: `Your appointment on ${selectedDate.toLocaleDateString()} at ${selectedTime} is confirmed.`,
+      });
+
+      // Reset and go back
+      setPaymentStep(false);
+      setCreatedAppointment(null);
+      setSelectedTime(null);
+      setSelectedDate(null);
+      
+      // Refresh available slots
+      if (selectedDate) {
+        fetchAvailableSlots(selectedDate);
+      }
+      
+    } catch (err) {
+      console.error('Payment error:', err);
+      toast({
+        title: "Payment failed",
+        description: err.response?.data?.detail || "Payment could not be processed. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setPaymentProcessing(false);
+    }
+  };
+
+  const handleCancelPayment = async () => {
+    // Cancel the pending appointment
+    if (createdAppointment) {
+      try {
+        await appointmentsApi.updateStatus(createdAppointment._id, 'cancelled');
+      } catch (err) {
+        console.error('Error cancelling appointment:', err);
+      }
+    }
+    setPaymentStep(false);
+    setCreatedAppointment(null);
+  };
+
   const getInitials = (name) => {
     if (!name) return '?';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
   const selectedAppointmentType = appointmentTypes.find(apt => apt.value === appointmentType);
+
+  // Disable dates in the past
+  const disabledDays = { before: new Date() };
 
   if (loading) {
     return (
