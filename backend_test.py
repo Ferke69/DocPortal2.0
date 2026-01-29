@@ -1229,7 +1229,11 @@ def test_working_hours_and_payment_flow(results):
     
     response = make_request("POST", "/payments/create-payment-intent", payment_intent_data, auth_token=client_token)
     if not response or (response.status_code != 200 and response.status_code != 201):
-        results.log_fail("Create Payment Intent", "Payment intent creation failed")
+        try:
+            error_data = response.json() if response else {}
+            results.log_fail("Create Payment Intent", f"HTTP {response.status_code if response else 'None'}: {error_data.get('detail', 'Unknown error')}")
+        except:
+            results.log_fail("Create Payment Intent", f"HTTP {response.status_code if response else 'None'}: {response.text if response else 'No response'}")
         return False
     
     try:
