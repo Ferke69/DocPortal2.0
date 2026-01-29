@@ -457,6 +457,11 @@ const ProviderDashboard = ({ onNavigate }) => {
             </Button>
           </div>
 
+          {/* Schedule Settings Tab */}
+          {activeTab === 'schedule' && (
+            <ScheduleSettings />
+          )}
+
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <>
