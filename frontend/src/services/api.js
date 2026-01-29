@@ -89,6 +89,14 @@ export const billingApi = {
   confirmPayment: (paymentIntentId) => api.post('/billing/confirm-payment', { paymentIntentId })
 };
 
+// Payments API
+export const paymentsApi = {
+  getConfig: () => api.get('/payments/config'),
+  createPaymentIntent: (appointmentId, amount) => api.post('/payments/create-payment-intent', { appointmentId, amount }),
+  confirmPayment: (paymentIntentId, appointmentId) => api.post('/payments/confirm-payment', { paymentIntentId, appointmentId }),
+  getAppointmentPayment: (appointmentId) => api.get(`/payments/appointment/${appointmentId}`)
+};
+
 // Users API
 export const usersApi = {
   getMe: () => api.get('/auth/me'),
