@@ -348,10 +348,13 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
                 <Calendar
                   mode="single"
                   selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
+                  onSelect={handleDateSelect}
+                  disabled={disabledDays}
                   className="rounded-md border dark:border-gray-600"
                 />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  Select a date to see available time slots based on provider's schedule
+                </p>
               </CardContent>
             </Card>
 
@@ -364,18 +367,36 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                  {timeSlots.map((time) => (
-                    <Button
-                      key={time}
-                      variant={selectedTime === time ? "default" : "outline"}
-                      onClick={() => setSelectedTime(time)}
-                      className={selectedTime === time ? 'bg-green-600 hover:bg-green-700' : 'dark:border-gray-600 dark:text-gray-300'}
-                    >
-                      {time}
-                    </Button>
-                  ))}
-                </div>
+                {!selectedDate ? (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                    <p>Please select a date first to see available time slots</p>
+                  </div>
+                ) : loadingSlots ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                    <span className="ml-3 text-gray-600 dark:text-gray-400">Loading available slots...</span>
+                  </div>
+                ) : availableSlots.length > 0 ? (
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                    {availableSlots.map((slot) => (
+                      <Button
+                        key={slot.time}
+                        variant={selectedTime === slot.time ? "default" : "outline"}
+                        onClick={() => setSelectedTime(slot.time)}
+                        className={selectedTime === slot.time ? 'bg-green-600 hover:bg-green-700' : 'dark:border-gray-600 dark:text-gray-300'}
+                      >
+                        {slot.time}
+                      </Button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <AlertCircle className="h-12 w-12 mx-auto mb-3 text-orange-400" />
+                    <p className="text-gray-600 dark:text-gray-400">{slotsMessage || 'No available slots for this date'}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Try selecting a different date</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
