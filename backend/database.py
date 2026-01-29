@@ -21,6 +21,8 @@ invoices_collection = db['invoices']
 clinical_notes_collection = db['clinical_notes']
 audit_logs_collection = db['audit_logs']
 invite_codes_collection = db['invite_codes']
+working_hours_collection = db['working_hours']
+payments_collection = db['payments']
 
 async def init_db():
     """Initialize database indexes for performance and uniqueness"""
