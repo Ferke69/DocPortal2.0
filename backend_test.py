@@ -1690,6 +1690,7 @@ def test_comprehensive_review_scenarios(results):
     # Test create invoice (provider only)
     print("\n🧪 Testing Create Invoice (Provider)...")
     invoice_data = {
+        "providerId": provider_user["user_id"],
         "clientId": client_user["user_id"],
         "amount": 150.0,
         "description": "Consultation fee",
