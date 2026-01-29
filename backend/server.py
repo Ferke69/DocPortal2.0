@@ -15,6 +15,7 @@ from routes.client_routes import router as client_router
 from routes.appointment_routes import router as appointment_router
 from routes.message_routes import router as message_router
 from routes.billing_routes import router as billing_router
+from routes.payment_routes import router as payment_router
 
 # Import database initialization
 from database import init_db
