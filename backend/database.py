@@ -57,6 +57,13 @@ async def init_db():
     await invite_codes_collection.create_index("providerId")
     await invite_codes_collection.create_index("expiresAt")
     
+    # Working Hours
+    await working_hours_collection.create_index("providerId", unique=True)
+    
+    # Payments
+    await payments_collection.create_index("appointmentId")
+    await payments_collection.create_index([("providerId", 1), ("status", 1)])
+    
     print("✓ Database indexes created")
 
 async def log_audit(user_id: str, action: str, resource_type: str, resource_id: str, details: dict = None):
