@@ -279,3 +279,30 @@ class PaymentIntentCreate(BaseModel):
 class PaymentConfirm(BaseModel):
     paymentIntentId: str
     appointmentId: str
+
+# Pending Items Models
+class PendingItemBase(BaseModel):
+    type: Literal['video_session', 'order']
+    title: str
+    clientId: str
+    providerId: str
+    amount: float = 0
+    status: Literal['open', 'paid', 'unpaid'] = 'open'
+    relatedAppointmentId: Optional[str] = None
+    description: Optional[str] = None
+
+class PendingItemCreate(PendingItemBase):
+    pass
+
+class PendingItemUpdate(BaseModel):
+    status: Optional[Literal['open', 'paid', 'unpaid']] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    amount: Optional[float] = None
+
+class PendingItemResponse(PendingItemBase):
+    id: str
+    clientName: Optional[str] = None
+    createdAt: datetime
+    updatedAt: datetime
+    urgency: Optional[Literal['low', 'medium', 'high']] = None
