@@ -63,6 +63,7 @@ api_router.include_router(client_router)
 api_router.include_router(appointment_router)
 api_router.include_router(message_router)
 api_router.include_router(billing_router)
+api_router.include_router(payment_router)
 
 # Include the router in the main app
 app.include_router(api_router)
