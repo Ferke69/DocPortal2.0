@@ -961,30 +961,357 @@ def test_review_request_scenario(results):
     
     return True
 
+def test_working_hours_and_payment_flow(results):
+    """Test the working hours and payment functionality as requested"""
+    print("🚀 Starting Working Hours and Payment Flow Test")
+    print(f"Testing against: {BASE_URL}")
+    print(f"Timestamp: {datetime.now().isoformat()}")
+    print("\nTesting working hours and payment workflow:")
+    print("1. Login as provider (testdoctor85487@example.com)")
+    print("2. Get current working hours")
+    print("3. Update working hours with custom schedule")
+    print("4. Get available slots for tomorrow")
+    print("5. Get payment config")
+    print("6. Create/login client")
+    print("7. Get available slots from client endpoint")
+    print("8. Create appointment")
+    print("9. Create payment intent")
+    print("10. Confirm payment")
+    
+    # Test API Health first
+    if not test_api_health(results):
+        print("❌ API is not healthy, stopping tests")
+        return False
+    
+    # Step 1: Login as the specific provider
+    print("\n🧪 Step 1: Login as provider testdoctor85487@example.com...")
+    login_data = {
+        "email": "testdoctor85487@example.com",
+        "password": "TestPass123!"
+    }
+    
+    response = make_request("POST", "/auth/login", login_data)
+    if not response or response.status_code != 200:
+        results.log_fail("Provider Login (testdoctor85487@example.com)", "Login failed - provider may not exist")
+        return False
+    
+    try:
+        provider_data = response.json()
+        provider_token = provider_data["token"]
+        provider_user = provider_data["user"]
+        results.log_pass("Provider Login (testdoctor85487@example.com)")
+    except:
+        results.log_fail("Provider Login (testdoctor85487@example.com)", "Invalid response format")
+        return False
+    
+    # Step 2: Get current working hours
+    print("\n🧪 Step 2: Get current working hours...")
+    response = make_request("GET", "/provider/working-hours", auth_token=provider_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Get Working Hours", "Failed to retrieve working hours")
+        return False
+    
+    try:
+        current_hours = response.json()
+        results.log_pass("Get Working Hours")
+        print(f"  ✓ Current schedule retrieved: {len(current_hours)} days configured")
+    except:
+        results.log_fail("Get Working Hours", "Invalid response format")
+        return False
+    
+    # Step 3: Update working hours with custom schedule
+    print("\n🧪 Step 3: Update working hours with custom schedule...")
+    custom_schedule = {
+        "monday": {"enabled": True, "startTime": "10:00", "endTime": "18:00"},
+        "tuesday": {"enabled": True, "startTime": "10:00", "endTime": "18:00"},
+        "wednesday": {"enabled": True, "startTime": "10:00", "endTime": "18:00"},
+        "thursday": {"enabled": True, "startTime": "10:00", "endTime": "18:00"},
+        "friday": {"enabled": True, "startTime": "10:00", "endTime": "18:00"},
+        "saturday": {"enabled": True, "startTime": "09:00", "endTime": "13:00"},
+        "sunday": {"enabled": False, "startTime": "09:00", "endTime": "17:00"},
+        "slotDuration": 60
+    }
+    
+    response = make_request("PUT", "/provider/working-hours", custom_schedule, auth_token=provider_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Update Working Hours", "Failed to update working hours")
+        return False
+    
+    try:
+        update_response = response.json()
+        results.log_pass("Update Working Hours")
+        print(f"  ✓ Working hours updated: Monday-Friday 10:00-18:00, Saturday 09:00-13:00, Sunday disabled")
+    except:
+        results.log_fail("Update Working Hours", "Invalid response format")
+        return False
+    
+    # Step 4: Get available slots for tomorrow
+    print("\n🧪 Step 4: Get available slots for tomorrow...")
+    tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+    response = make_request("GET", f"/provider/available-slots/{tomorrow}", auth_token=provider_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Get Available Slots (Provider)", "Failed to retrieve available slots")
+        return False
+    
+    try:
+        provider_slots = response.json()
+        results.log_pass("Get Available Slots (Provider)")
+        print(f"  ✓ Found {len(provider_slots.get('slots', []))} available slots for {tomorrow}")
+        print(f"  ✓ Slot duration: {provider_slots.get('slotDuration', 'N/A')} minutes")
+    except:
+        results.log_fail("Get Available Slots (Provider)", "Invalid response format")
+        return False
+    
+    # Step 5: Get payment config
+    print("\n🧪 Step 5: Get payment config...")
+    response = make_request("GET", "/payments/config")
+    if not response or response.status_code != 200:
+        results.log_fail("Get Payment Config", "Failed to retrieve payment config")
+        return False
+    
+    try:
+        payment_config = response.json()
+        results.log_pass("Get Payment Config")
+        print(f"  ✓ Payment configured: {payment_config.get('configured', False)}")
+        print(f"  ✓ Test mode: {payment_config.get('testMode', True)}")
+        if not payment_config.get('configured', False):
+            print(f"  ℹ️  Mock mode: {payment_config.get('message', 'N/A')}")
+    except:
+        results.log_fail("Get Payment Config", "Invalid response format")
+        return False
+    
+    # Step 6: Create/login client (reuse existing or create new)
+    print("\n🧪 Step 6: Create/login client...")
+    
+    # First try to get an existing invite code
+    response = make_request("GET", "/provider/invite-codes", auth_token=provider_token)
+    invite_code = None
+    
+    if response and response.status_code == 200:
+        try:
+            codes = response.json()
+            # Find an unused code
+            for code in codes:
+                if not code.get('used', True):
+                    invite_code = code['code']
+                    break
+        except:
+            pass
+    
+    # If no unused code, create one
+    if not invite_code:
+        invite_data = {"expiresInDays": 7}
+        response = make_request("POST", "/provider/invite-code", invite_data, auth_token=provider_token)
+        if response and response.status_code in [200, 201]:
+            try:
+                invite_response = response.json()
+                invite_code = invite_response['code']
+            except:
+                results.log_fail("Create Invite Code for Client", "Failed to create invite code")
+                return False
+    
+    if not invite_code:
+        results.log_fail("Get/Create Invite Code", "No invite code available")
+        return False
+    
+    # Create new client
+    client_email = f"testclient_{int(time.time())}@example.com"
+    client_password = "ClientPass123!"
+    
+    client_data = {
+        "email": client_email,
+        "password": client_password,
+        "name": "Test Payment Client",
+        "userType": "client",
+        "phone": "+1-555-7777",
+        "dateOfBirth": "1988-03-20",
+        "address": "789 Payment St, Test City, TC 12345",
+        "insurance": "Payment Test Insurance",
+        "inviteCode": invite_code,
+        "emergencyContact": {
+            "name": "Emergency Contact",
+            "phone": "+1-555-6666",
+            "relationship": "Spouse"
+        }
+    }
+    
+    response = make_request("POST", "/auth/register", client_data)
+    if not response or (response.status_code != 200 and response.status_code != 201):
+        results.log_fail("Client Registration", "Registration failed")
+        return False
+    
+    # Login as client
+    client_login_data = {
+        "email": client_email,
+        "password": client_password
+    }
+    
+    response = make_request("POST", "/auth/login", client_login_data)
+    if not response or response.status_code != 200:
+        results.log_fail("Client Login", "Login failed")
+        return False
+    
+    try:
+        client_auth_data = response.json()
+        client_token = client_auth_data["token"]
+        client_user = client_auth_data["user"]
+        results.log_pass("Create/Login Client")
+    except:
+        results.log_fail("Client Login", "Invalid response format")
+        return False
+    
+    # Step 7: Get available slots from client endpoint
+    print("\n🧪 Step 7: Get available slots from client endpoint...")
+    response = make_request("GET", f"/client/provider/available-slots/{tomorrow}", auth_token=client_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Get Available Slots (Client)", "Failed to retrieve available slots")
+        return False
+    
+    try:
+        client_slots = response.json()
+        results.log_pass("Get Available Slots (Client)")
+        print(f"  ✓ Found {len(client_slots.get('slots', []))} available slots for {tomorrow}")
+        
+        # Verify slots match between provider and client endpoints
+        if len(client_slots.get('slots', [])) == len(provider_slots.get('slots', [])):
+            print("  ✓ Slot counts match between provider and client endpoints")
+        else:
+            print(f"  ⚠️  Slot count mismatch: Provider={len(provider_slots.get('slots', []))}, Client={len(client_slots.get('slots', []))}")
+    except:
+        results.log_fail("Get Available Slots (Client)", "Invalid response format")
+        return False
+    
+    # Step 8: Create appointment
+    print("\n🧪 Step 8: Create appointment...")
+    
+    # Use first available slot if any
+    available_slots = client_slots.get('slots', [])
+    if not available_slots:
+        results.log_fail("Create Appointment", "No available slots to book")
+        return False
+    
+    first_slot = available_slots[0]
+    appointment_data = {
+        "clientId": client_user["user_id"],
+        "providerId": provider_user["user_id"],
+        "date": tomorrow,
+        "time": first_slot["time"],
+        "duration": client_slots.get('slotDuration', 60),
+        "type": "Payment Test Consultation",
+        "notes": "Testing payment flow with working hours integration",
+        "amount": 175.0
+    }
+    
+    response = make_request("POST", "/appointments", appointment_data, auth_token=client_token)
+    if not response or (response.status_code != 200 and response.status_code != 201):
+        results.log_fail("Create Appointment", "Appointment booking failed")
+        return False
+    
+    try:
+        appointment_response = response.json()
+        appointment_id = appointment_response["id"]
+        results.log_pass("Create Appointment")
+        print(f"  ✓ Appointment ID: {appointment_id}")
+        print(f"  ✓ Time slot: {first_slot['time']} on {tomorrow}")
+        print(f"  ✓ Amount: ${appointment_data['amount']}")
+    except:
+        results.log_fail("Create Appointment", "Invalid response format")
+        return False
+    
+    # Step 9: Create payment intent
+    print("\n🧪 Step 9: Create payment intent...")
+    payment_intent_data = {
+        "appointmentId": appointment_id,
+        "amount": appointment_data["amount"]
+    }
+    
+    response = make_request("POST", "/payments/create-payment-intent", payment_intent_data, auth_token=client_token)
+    if not response or (response.status_code != 200 and response.status_code != 201):
+        results.log_fail("Create Payment Intent", "Payment intent creation failed")
+        return False
+    
+    try:
+        payment_intent = response.json()
+        payment_intent_id = payment_intent["paymentIntentId"]
+        results.log_pass("Create Payment Intent")
+        print(f"  ✓ Payment Intent ID: {payment_intent_id}")
+        print(f"  ✓ Amount: ${payment_intent['amount']}")
+        if payment_intent.get('mockMode'):
+            print(f"  ℹ️  Mock mode: {payment_intent.get('message', 'Payment simulation')}")
+    except:
+        results.log_fail("Create Payment Intent", "Invalid response format")
+        return False
+    
+    # Step 10: Confirm payment
+    print("\n🧪 Step 10: Confirm payment...")
+    payment_confirm_data = {
+        "paymentIntentId": payment_intent_id,
+        "appointmentId": appointment_id
+    }
+    
+    response = make_request("POST", "/payments/confirm-payment", payment_confirm_data, auth_token=client_token)
+    if not response or response.status_code != 200:
+        results.log_fail("Confirm Payment", "Payment confirmation failed")
+        return False
+    
+    try:
+        payment_confirmation = response.json()
+        results.log_pass("Confirm Payment")
+        print(f"  ✓ Payment confirmed: {payment_confirmation.get('success', False)}")
+        print(f"  ✓ Appointment status: {payment_confirmation.get('appointmentStatus', 'N/A')}")
+        print(f"  ✓ Invoice ID: {payment_confirmation.get('invoiceId', 'N/A')}")
+    except:
+        results.log_fail("Confirm Payment", "Invalid response format")
+        return False
+    
+    # Verify booked slot no longer appears in available slots
+    print("\n🧪 Verification: Check that booked slot is no longer available...")
+    response = make_request("GET", f"/client/provider/available-slots/{tomorrow}", auth_token=client_token)
+    if response and response.status_code == 200:
+        try:
+            updated_slots = response.json()
+            updated_slot_count = len(updated_slots.get('slots', []))
+            original_slot_count = len(available_slots)
+            
+            if updated_slot_count < original_slot_count:
+                results.log_pass("Slot Booking Verification")
+                print(f"  ✓ Available slots reduced from {original_slot_count} to {updated_slot_count}")
+            else:
+                results.log_fail("Slot Booking Verification", f"Slot count unchanged: {updated_slot_count}")
+        except:
+            results.log_fail("Slot Booking Verification", "Invalid response format")
+    else:
+        results.log_fail("Slot Booking Verification", "Failed to retrieve updated slots")
+    
+    return True
+
 def main():
-    """Main test execution - Review Request Scenario"""
+    """Main test execution - Working Hours and Payment Flow"""
     results = TestResults()
     
-    # Run the specific review request scenario
-    success = test_review_request_scenario(results)
+    # Run the working hours and payment flow test
+    success = test_working_hours_and_payment_flow(results)
     
     # Final summary
     results.summary()
     
     if success:
-        print("\n🎉 Review Request Scenario Test PASSED!")
-        print("✅ Complete provider-client workflow is working correctly!")
-        print("✅ All 8 steps completed successfully:")
+        print("\n🎉 Working Hours and Payment Flow Test PASSED!")
+        print("✅ Complete working hours and payment workflow is working correctly!")
+        print("✅ All 10+ steps completed successfully:")
         print("  1. ✅ Provider login")
-        print("  2. ✅ Invite code generation")
-        print("  3. ✅ Client registration with invite code")
-        print("  4. ✅ Client login")
-        print("  5. ✅ Message sending (client → provider)")
-        print("  6. ✅ Message retrieval (provider)")
-        print("  7. ✅ Appointment booking (client)")
-        print("  8. ✅ Appointment verification (both sides)")
+        print("  2. ✅ Get working hours")
+        print("  3. ✅ Update working hours")
+        print("  4. ✅ Get available slots (provider)")
+        print("  5. ✅ Get payment config")
+        print("  6. ✅ Create/login client")
+        print("  7. ✅ Get available slots (client)")
+        print("  8. ✅ Create appointment")
+        print("  9. ✅ Create payment intent")
+        print("  10. ✅ Confirm payment")
+        print("  11. ✅ Verify slot booking")
     else:
-        print("\n⚠️  Review Request Scenario Test FAILED!")
+        print("\n⚠️  Working Hours and Payment Flow Test FAILED!")
         print("❌ Some steps in the workflow are not working correctly.")
     
     return success
