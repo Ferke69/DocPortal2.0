@@ -58,9 +58,14 @@ async def create_invoice(
     # Create invoice
     invoice_dict = invoice.model_dump()
     invoice_id = str(uuid.uuid4())
+    
+    # Convert date objects to ISO strings for MongoDB compatibility
+    if isinstance(invoice_dict.get("dueDate"), date):
+        invoice_dict["dueDate"] = invoice_dict["dueDate"].isoformat()
+    
     invoice_dict.update({
         "_id": invoice_id,
-        "date": date.today().isoformat(),
+        "invoiceDate": date.today().isoformat(),
         "status": "pending",
         "paymentMethod": None,
         "transactionId": None,
