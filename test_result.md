@@ -337,11 +337,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Messaging System - Send Messages"
-    - "Messaging System - Get Messages"
-    - "Appointment System - Create Appointments"
-    - "Appointment System - Get Appointment Details"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
