@@ -305,6 +305,18 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Payment confirmation working correctly. POST /api/payments/confirm-payment processes payment confirmations, updates appointment status to 'confirmed', creates invoice records, and properly handles both real Stripe and mock mode payments."
 
+  - task: "Billing System - Create Invoice"
+    implemented: true
+    working: false
+    file: "/app/backend/routes/billing_routes.py"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ MINOR ISSUE: Create Invoice endpoint (POST /api/billing/invoices) has date serialization error. Backend tries to store Python datetime.date object in MongoDB which causes 'cannot encode object: datetime.date' error. API structure is correct but needs date conversion to string or datetime object before MongoDB storage. All other billing endpoints working correctly."
+
 frontend:
   - task: "Separate Provider Login Page"
     implemented: true
