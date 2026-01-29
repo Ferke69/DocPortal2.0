@@ -95,7 +95,7 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 ## Test Credentials
 - **Provider**: testprovider_xxx@example.com / TestPass123!
 - **Client**: testclient_xxx@example.com / TestPass123!
-- **API URL**: https://doctor-patient-swap.preview.emergentagent.com
+- **API URL**: https://careconnect-portal.preview.emergentagent.com
 
 ## Key Files
 - `/app/frontend/src/components/ProviderLogin.jsx` - Provider login page

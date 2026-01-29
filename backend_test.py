@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://doctor-patient-swap.preview.emergentagent.com/api"
+BASE_URL = "https://careconnect-portal.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class TestResults:
