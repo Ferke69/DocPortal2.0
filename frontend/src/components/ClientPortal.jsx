@@ -490,7 +490,7 @@ const ClientPortal = ({ onNavigate }) => {
                       className="p-3 sm:p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900 dark:text-white">{getCurrencySymbol()}{inv.amount}</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{currencySymbol}{inv.amount}</span>
                         <Badge variant="outline" className="text-orange-600 border-orange-600 text-xs">Due {inv.dueDate}</Badge>
                       </div>
                       <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-3">{inv.description}</p>
