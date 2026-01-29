@@ -1227,7 +1227,13 @@ def test_working_hours_and_payment_flow(results):
         "amount": appointment_data["amount"]
     }
     
+    print(f"  → Sending payment intent request: {payment_intent_data}")
     response = make_request("POST", "/payments/create-payment-intent", payment_intent_data, auth_token=client_token)
+    print(f"  → Response status: {response.status_code if response else 'None'}")
+    
+    if response:
+        print(f"  → Response text: {response.text[:200]}...")
+    
     if not response or (response.status_code != 200 and response.status_code != 201):
         try:
             error_data = response.json() if response else {}
