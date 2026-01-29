@@ -336,67 +336,87 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
               </CardContent>
             </Card>
 
-            {/* Select Date */}
+            {/* Select Date & Time - Combined */}
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
                 <CardTitle className="flex items-center dark:text-white">
                   <CalendarIcon className="h-5 w-5 mr-2 text-green-600" />
-                  Select Date
+                  Select Date & Time
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={handleDateSelect}
-                  disabled={disabledDays}
-                  className="rounded-md border dark:border-gray-600"
-                />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                  Select a date to see available time slots based on provider schedule
-                </p>
-              </CardContent>
-            </Card>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Date Selection */}
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Choose a date</p>
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={handleDateSelect}
+                      disabled={disabledDays}
+                      className="rounded-md border dark:border-gray-600 w-full"
+                    />
+                  </div>
 
-            {/* Select Time */}
-            <Card className="dark:bg-gray-800 dark:border-gray-700">
-              <CardHeader>
-                <CardTitle className="flex items-center dark:text-white">
-                  <Clock className="h-5 w-5 mr-2 text-orange-600" />
-                  Available Times
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {!selectedDate ? (
-                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                    <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                    <p>Please select a date first to see available time slots</p>
+                  {/* Time Selection */}
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      {selectedDate ? `Available times for ${selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : 'Select a date first'}
+                    </p>
+                    
+                    {!selectedDate ? (
+                      <div className="flex flex-col items-center justify-center h-64 bg-gray-50 dark:bg-gray-700/30 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-600">
+                        <CalendarIcon className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-3" />
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Pick a date to see available times</p>
+                      </div>
+                    ) : loadingSlots ? (
+                      <div className="flex flex-col items-center justify-center h-64 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mb-3"></div>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Loading times...</span>
+                      </div>
+                    ) : availableSlots.length > 0 ? (
+                      <div className="h-64 overflow-y-auto pr-2 space-y-2">
+                        {availableSlots.map((slot) => (
+                          <button
+                            key={slot.time}
+                            onClick={() => setSelectedTime(slot.time)}
+                            className={`w-full p-3 rounded-lg border-2 transition-all duration-200 flex items-center justify-between ${
+                              selectedTime === slot.time
+                                ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
+                                : 'border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-700 bg-white dark:bg-gray-700'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                selectedTime === slot.time 
+                                  ? 'bg-green-500 text-white' 
+                                  : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+                              }`}>
+                                <Clock className="h-5 w-5" />
+                              </div>
+                              <span className={`font-medium ${
+                                selectedTime === slot.time 
+                                  ? 'text-green-700 dark:text-green-300' 
+                                  : 'text-gray-700 dark:text-gray-200'
+                              }`}>
+                                {slot.time}
+                              </span>
+                            </div>
+                            {selectedTime === slot.time && (
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-64 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                        <AlertCircle className="h-10 w-10 text-orange-400 mb-3" />
+                        <p className="text-sm text-gray-600 dark:text-gray-400 text-center px-4">{slotsMessage || 'No available slots'}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">Try a different date</p>
+                      </div>
+                    )}
                   </div>
-                ) : loadingSlots ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                    <span className="ml-3 text-gray-600 dark:text-gray-400">Loading available slots...</span>
-                  </div>
-                ) : availableSlots.length > 0 ? (
-                  <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                    {availableSlots.map((slot) => (
-                      <Button
-                        key={slot.time}
-                        variant={selectedTime === slot.time ? "default" : "outline"}
-                        onClick={() => setSelectedTime(slot.time)}
-                        className={selectedTime === slot.time ? 'bg-green-600 hover:bg-green-700' : 'dark:border-gray-600 dark:text-gray-300'}
-                      >
-                        {slot.time}
-                      </Button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <AlertCircle className="h-12 w-12 mx-auto mb-3 text-orange-400" />
-                    <p className="text-gray-600 dark:text-gray-400">{slotsMessage || 'No available slots for this date'}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Try selecting a different date</p>
-                  </div>
-                )}
+                </div>
               </CardContent>
             </Card>
           </div>
