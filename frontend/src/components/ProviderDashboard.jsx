@@ -17,6 +17,7 @@ import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
 import ScheduleSettings from './ScheduleSettings';
 import { useCurrency } from './CurrencySelector';
+import PendingItemsWidget from './PendingItemsWidget';
 import api from '../services/api';
 
 const ProviderDashboard = ({ onNavigate }) => {
