@@ -436,6 +436,7 @@ const ProviderDashboard = ({ onNavigate }) => {
                 {activeTab === 'appointments' && 'Appointments'}
                 {activeTab === 'billing' && 'Billing & Payments'}
                 {activeTab === 'invites' && 'Invite Codes'}
+                {activeTab === 'schedule' && 'Schedule Settings'}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">Welcome back, {user?.name?.split(' ')[0]}</p>
             </div>
