@@ -14,6 +14,10 @@ def calculate_urgency(created_at: datetime, status: str) -> str:
     if status == 'paid':
         return 'low'
     
+    # Ensure created_at has timezone info
+    if created_at.tzinfo is None:
+        created_at = created_at.replace(tzinfo=timezone.utc)
+    
     age = datetime.now(timezone.utc) - created_at
     
     if age > timedelta(days=7):
