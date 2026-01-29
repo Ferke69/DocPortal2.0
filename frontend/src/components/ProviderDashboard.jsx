@@ -272,6 +272,18 @@ const ProviderDashboard = ({ onNavigate }) => {
         <span>Invite Codes</span>
       </button>
 
+      <button
+        onClick={() => handleNavClick('schedule')}
+        className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
+          activeTab === 'schedule' 
+            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+        }`}
+      >
+        <ClipboardList className="h-5 w-5 mr-3 flex-shrink-0" />
+        <span>Schedule Settings</span>
+      </button>
+
       <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
 
       <button
