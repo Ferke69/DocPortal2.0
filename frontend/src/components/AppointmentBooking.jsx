@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, ArrowLeft, Clock, Video, User, CreditCard, AlertCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, ArrowLeft, Clock, Video, User, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
