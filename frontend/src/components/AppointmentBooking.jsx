@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, ArrowLeft, Clock, Video, User } from 'lucide-react';
+import { Calendar as CalendarIcon, ArrowLeft, Clock, Video, User, CreditCard, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
-import { appointmentsApi, clientApi } from '../services/api';
+import { appointmentsApi, clientApi, paymentsApi } from '../services/api';
 import { toast } from '../hooks/use-toast';
 import ThemeToggle from './ThemeToggle';
 
 const AppointmentBooking = ({ userType, userId, onBack }) => {
   const { user } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [appointmentType, setAppointmentType] = useState('Initial Consultation');
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [noProvider, setNoProvider] = useState(false);
-
-  // Time slots
-  const timeSlots = [
-    '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
-    '11:00 AM', '11:30 AM', '1:00 PM', '1:30 PM',
-    '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM',
-    '4:00 PM', '4:30 PM'
-  ];
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [slotsMessage, setSlotsMessage] = useState('');
+  const [paymentStep, setPaymentStep] = useState(false);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [createdAppointment, setCreatedAppointment] = useState(null);
+  const [paymentConfig, setPaymentConfig] = useState(null);
 
   const appointmentTypes = [
     { value: 'Initial Consultation', duration: 60, price: 150 },
@@ -36,12 +36,18 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
 
   useEffect(() => {
     fetchProvider();
+    fetchPaymentConfig();
   }, []);
+
+  useEffect(() => {
+    if (selectedDate && selectedProvider) {
+      fetchAvailableSlots(selectedDate);
+    }
+  }, [selectedDate, selectedProvider]);
 
   const fetchProvider = async () => {
     try {
       setLoading(true);
-      // For clients, get their assigned provider
       const response = await clientApi.getProvider();
       if (response.data) {
         setSelectedProvider(response.data);
@@ -55,6 +61,49 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchPaymentConfig = async () => {
+    try {
+      const response = await paymentsApi.getConfig();
+      setPaymentConfig(response.data);
+    } catch (err) {
+      console.error('Error fetching payment config:', err);
+    }
+  };
+
+  const fetchAvailableSlots = async (date) => {
+    if (!date) return;
+    
+    try {
+      setLoadingSlots(true);
+      setSelectedTime(null);
+      setSlotsMessage('');
+      
+      const dateStr = date.toISOString().split('T')[0];
+      const response = await clientApi.getAvailableSlots(dateStr);
+      
+      if (response.data.slots) {
+        setAvailableSlots(response.data.slots);
+        if (response.data.slots.length === 0) {
+          setSlotsMessage(response.data.message || 'No available slots for this date');
+        }
+      } else {
+        setAvailableSlots([]);
+        setSlotsMessage(response.data.message || 'No available slots');
+      }
+    } catch (err) {
+      console.error('Error fetching slots:', err);
+      setAvailableSlots([]);
+      setSlotsMessage('Could not load available slots');
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setSelectedTime(null);
   };
 
   const handleBookAppointment = async () => {
