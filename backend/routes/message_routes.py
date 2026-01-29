@@ -42,6 +42,7 @@ async def get_messages(
 @router.post("")
 async def send_message(
     message: MessageCreate,
+    background_tasks: BackgroundTasks,
     current_user: dict = Depends(get_current_user)
 ):
     """Send a message"""
@@ -69,6 +70,25 @@ async def send_message(
     
     await messages_collection.insert_one(message_dict)
     await log_audit(current_user["userId"], "create", "message", message_id)
+    
+    # Send email notification if client is sending to provider
+    if message.senderType == 'client' and is_email_configured():
+        # Get sender (client) info
+        sender = await users_collection.find_one({"user_id": message.senderId})
+        client_name = sender.get("name", "A client") if sender else "A client"
+        provider_name = receiver.get("name", "Provider")
+        provider_email = receiver.get("email")
+        
+        if provider_email:
+            # Add email notification to background tasks (non-blocking)
+            background_tasks.add_task(
+                send_new_message_notification,
+                provider_email=provider_email,
+                provider_name=provider_name,
+                client_name=client_name,
+                message_preview=message.message
+            )
+            logger.info(f"Email notification queued for provider {provider_email}")
     
     return {
         "message": "Message sent successfully",
