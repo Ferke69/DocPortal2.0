@@ -12,33 +12,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { clientApi, billingApi, messagesApi } from '../services/api';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
+import { useCurrency } from './CurrencySelector';
 
 const ClientPortal = ({ onNavigate }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
-  // Currency options
-  const currencies = [
-    { code: 'USD', symbol: '$', name: 'US Dollar' },
-    { code: 'EUR', symbol: '€', name: 'Euro' },
-    { code: 'GBP', symbol: '£', name: 'British Pound' },
-    { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc' }
-  ];
-  
-  const [selectedCurrency, setSelectedCurrency] = useState(() => {
-    const saved = localStorage.getItem('clientCurrency');
-    return saved || 'USD';
-  });
-  
-  const getCurrencySymbol = () => {
-    const currency = currencies.find(c => c.code === selectedCurrency);
-    return currency ? currency.symbol : '$';
-  };
-  
-  const handleCurrencyChange = (code) => {
-    setSelectedCurrency(code);
-    localStorage.setItem('clientCurrency', code);
-  };
+  // Use shared currency hook
+  const { symbol: currencySymbol } = useCurrency();
   
   // Dashboard data
   const [stats, setStats] = useState({
