@@ -813,7 +813,7 @@ const ProviderDashboard = ({ onNavigate }) => {
                             </div>
                           </div>
                           <div className="flex items-center justify-between sm:justify-end space-x-4">
-                            <p className="text-lg font-bold text-gray-900 dark:text-white">${inv.amount}</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">{getCurrencySymbol()}{inv.amount}</p>
                             <Badge variant={inv.status === 'paid' ? 'default' : inv.status === 'pending' ? 'secondary' : 'destructive'}>{inv.status}</Badge>
                           </div>
                         </div>
