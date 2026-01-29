@@ -86,7 +86,22 @@ const ProviderDashboard = ({ onNavigate }) => {
       setClients(clientsRes.data || []);
 
       const messagesRes = await messagesApi.getAll();
-      setRecentMessages((messagesRes.data || []).slice(-5).reverse());
+      // Get only the latest message from each client
+      const allMessages = messagesRes.data || [];
+      const clientLatestMessages = {};
+      allMessages.forEach(msg => {
+        if (msg.senderType === 'client') {
+          const existing = clientLatestMessages[msg.senderId];
+          if (!existing || new Date(msg.timestamp) > new Date(existing.timestamp)) {
+            clientLatestMessages[msg.senderId] = msg;
+          }
+        }
+      });
+      // Sort by timestamp descending and take top 5
+      const latestMessages = Object.values(clientLatestMessages)
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 5);
+      setRecentMessages(latestMessages);
 
       try {
         const invoicesRes = await billingApi.getInvoices();
@@ -306,29 +321,35 @@ const ProviderDashboard = ({ onNavigate }) => {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 lg:hidden" onClick={() => setMobileMenuOpen(false)}>
-          <div className="w-72 h-full bg-white dark:bg-gray-800 p-4" onClick={e => e.stopPropagation()}>
+          <div className="w-72 h-full bg-white dark:bg-gray-800 p-4 flex flex-col" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-xl font-bold text-blue-600 dark:text-blue-400">DocPortal</h1>
               <button onClick={() => setMobileMenuOpen(false)}>
                 <X className="h-6 w-6 text-gray-500" />
               </button>
             </div>
-            <nav className="space-y-1">
+            <nav className="space-y-1 flex-1 overflow-y-auto">
               <NavItems />
             </nav>
-            <div className="absolute bottom-4 left-4 right-4">
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
               <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-10 w-10 flex-shrink-0">
                   <AvatarImage src={user?.avatar} alt={user?.name} />
                   <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user?.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4" />
-                </Button>
               </div>
+              <Button 
+                variant="outline" 
+                className="w-full mt-3 text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-900/20" 
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
         </div>
@@ -583,14 +604,23 @@ const ProviderDashboard = ({ onNavigate }) => {
                         {recentMessages.slice(0, 4).map((msg) => (
                           <div key={msg._id || msg.id} className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="font-medium text-gray-900 dark:text-white text-sm truncate">
-                                {msg.senderType === 'client' ? getClientName(msg.senderId) : 'You'}
-                              </span>
-                              {!msg.read && msg.senderType === 'client' && (
-                                <Badge className="bg-blue-100 text-blue-700 text-xs ml-2">New</Badge>
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                <Avatar className="h-6 w-6 flex-shrink-0">
+                                  <AvatarImage src={getClientAvatar(msg.senderId)} />
+                                  <AvatarFallback className="text-xs">{getInitials(getClientName(msg.senderId))}</AvatarFallback>
+                                </Avatar>
+                                <span className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                                  {getClientName(msg.senderId)}
+                                </span>
+                              </div>
+                              {!msg.read && (
+                                <Badge className="bg-blue-100 text-blue-700 text-xs ml-2 flex-shrink-0">New</Badge>
                               )}
                             </div>
-                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-1">{msg.message}</p>
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-1 pl-8">{msg.message}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 pl-8">
+                              {new Date(msg.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </p>
                           </div>
                         ))}
                         <Button variant="outline" className="w-full mt-2 text-sm" onClick={() => onNavigate('messages')}>
