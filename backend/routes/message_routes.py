@@ -1,9 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
 from auth import get_current_user
 from database import messages_collection, users_collection, log_audit
 from models import MessageCreate
 from datetime import datetime, timezone
+from services.email_service import send_new_message_notification, is_email_configured
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/messages", tags=["Messages"])
 
