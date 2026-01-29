@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from auth import get_current_client
-from database import users_collection, appointments_collection, messages_collection, invoices_collection, log_audit
+from database import users_collection, appointments_collection, messages_collection, invoices_collection, working_hours_collection, log_audit
 from models import ClientDashboardStats, AppointmentCreate
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timezone, timedelta
 import uuid
 
 router = APIRouter(prefix="/client", tags=["Client"])
