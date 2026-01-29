@@ -11,7 +11,7 @@ try:
     import stripe
     stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "sk_test_fake_key_for_demo_purposes_only")
     STRIPE_ENABLED = True
-except:
+except ImportError:
     STRIPE_ENABLED = False
 
 router = APIRouter(prefix="/billing", tags=["Billing"])
