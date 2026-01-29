@@ -97,6 +97,24 @@ export const paymentsApi = {
   getAppointmentPayment: (appointmentId) => api.get(`/payments/appointment/${appointmentId}`)
 };
 
+// Pending Items API
+export const pendingItemsApi = {
+  getSummary: () => api.get('/provider/pending-items/summary'),
+  getAll: (params = {}) => {
+    const queryParams = {};
+    if (params.status) queryParams.status = params.status;
+    if (params.type) queryParams.type = params.type;
+    if (params.sortBy) queryParams.sort_by = params.sortBy;
+    if (params.sortOrder) queryParams.sort_order = params.sortOrder;
+    return api.get('/provider/pending-items', { params: queryParams });
+  },
+  create: (item) => api.post('/provider/pending-items', item),
+  update: (id, data) => api.put(`/provider/pending-items/${id}`, data),
+  delete: (id) => api.delete(`/provider/pending-items/${id}`),
+  markPaid: (id) => api.post(`/provider/pending-items/${id}/mark-paid`),
+  markUnpaid: (id) => api.post(`/provider/pending-items/${id}/mark-unpaid`)
+};
+
 // Users API
 export const usersApi = {
   getMe: () => api.get('/auth/me'),
