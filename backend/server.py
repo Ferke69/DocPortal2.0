@@ -16,6 +16,7 @@ from routes.appointment_routes import router as appointment_router
 from routes.message_routes import router as message_router
 from routes.billing_routes import router as billing_router
 from routes.payment_routes import router as payment_router
+from routes.pending_items_routes import router as pending_items_router
 
 # Import database initialization
 from database import init_db
@@ -64,6 +65,7 @@ api_router.include_router(appointment_router)
 api_router.include_router(message_router)
 api_router.include_router(billing_router)
 api_router.include_router(payment_router)
+api_router.include_router(pending_items_router)
 
 # Include the router in the main app
 app.include_router(api_router)
