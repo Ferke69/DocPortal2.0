@@ -353,7 +353,7 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
                   className="rounded-md border dark:border-gray-600"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                  Select a date to see available time slots based on provider's schedule
+                  Select a date to see available time slots based on provider schedule
                 </p>
               </CardContent>
             </Card>
