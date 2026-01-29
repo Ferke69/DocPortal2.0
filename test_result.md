@@ -530,6 +530,38 @@ agent_communication:
       - ✅ Payment system working in mock mode (Stripe not configured with real keys)
       - ✅ Payment intent creation and confirmation workflow
       - ✅ Appointment status updates after payment confirmation
+
+  - agent: "main"
+    message: |
+      USER REQUEST: Comprehensive analysis and testing of client and provider panels
+      
+      Initiating full test coverage for:
+      1. Provider Panel Functions:
+         - Dashboard stats loading
+         - Invite code generation, listing, deletion
+         - Client management
+         - Appointment viewing
+         - Messaging functionality
+         - Working hours management
+         - Available slots generation
+         - Billing/invoice management
+         - Profile management
+         
+      2. Client Panel Functions:
+         - Dashboard stats loading
+         - Provider info retrieval
+         - Appointment booking with payment flow
+         - Available slots retrieval
+         - Messaging functionality
+         - Invoice viewing and payment
+         - Profile management
+         
+      3. Shared Functions:
+         - Authentication (login/logout)
+         - Registration flow (provider and client with invite code)
+         - Google OAuth authentication
+         
+      Please run comprehensive tests on all backend APIs.
       - ✅ Invoice generation after successful payment
       - ✅ Proper slot availability updates after booking
       
