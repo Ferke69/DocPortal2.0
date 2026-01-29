@@ -224,7 +224,7 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
     // Cancel the pending appointment
     if (createdAppointment) {
       try {
-        await appointmentsApi.updateStatus(createdAppointment._id, 'cancelled');
+        await appointmentsApi.cancel(createdAppointment.id || createdAppointment._id);
       } catch (err) {
         console.error('Error cancelling appointment:', err);
       }
