@@ -397,9 +397,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Provider and Client Panel Complete Flow Analysis"
+    - "Backend API reliability testing"
+    - "Frontend feature completion check"
   stuck_tasks: []
-  test_all: false
+  test_all: true
   test_priority: "high_first"
 
 agent_communication:
