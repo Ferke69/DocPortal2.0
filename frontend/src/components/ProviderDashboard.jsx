@@ -272,6 +272,8 @@ const ProviderDashboard = ({ onNavigate }) => {
         <span>Invite Codes</span>
       </button>
 
+      <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+
       <button
         onClick={() => handleNavClick('schedule')}
         className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
@@ -284,14 +286,12 @@ const ProviderDashboard = ({ onNavigate }) => {
         <span>Schedule Settings</span>
       </button>
 
-      <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-
       <button
         onClick={() => { navigate('/provider/profile'); setMobileMenuOpen(false); }}
         className="w-full flex items-center px-4 py-3 rounded-lg text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
       >
         <User className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Profile & Settings</span>
+        <span>Profile</span>
       </button>
     </>
   );
