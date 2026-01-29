@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from auth import get_current_provider
-from database import users_collection, appointments_collection, messages_collection, invoices_collection, clinical_notes_collection, invite_codes_collection, log_audit
-from models import ProviderDashboardStats, ClinicalNoteCreate, ClinicalNoteInDB, InviteCodeCreate
+from database import users_collection, appointments_collection, messages_collection, invoices_collection, clinical_notes_collection, invite_codes_collection, working_hours_collection, log_audit
+from models import ProviderDashboardStats, ClinicalNoteCreate, ClinicalNoteInDB, InviteCodeCreate, WorkingHours, WorkingHoursUpdate, DaySchedule
 from datetime import datetime, date, timezone, timedelta
 from bson import ObjectId
 import uuid
