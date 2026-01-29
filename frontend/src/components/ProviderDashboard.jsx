@@ -489,13 +489,29 @@ const ProviderDashboard = ({ onNavigate }) => {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <>
+              {/* Currency Selector */}
+              <div className="flex justify-end mb-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Currency:</span>
+                  <select
+                    value={selectedCurrency}
+                    onChange={(e) => handleCurrencyChange(e.target.value)}
+                    className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                  >
+                    {currencies.map(c => (
+                      <option key={c.code} value={c.code}>{c.symbol} {c.code}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
                 <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardContent className="p-3 sm:p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Monthly Income</p>
-                        <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">${stats.monthlyIncome.toLocaleString()}</p>
+                        <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{getCurrencySymbol()}{stats.monthlyIncome.toLocaleString()}</p>
                       </div>
                       <div className="h-8 w-8 sm:h-12 sm:w-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
                         <DollarSign className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
