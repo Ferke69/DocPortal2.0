@@ -245,6 +245,66 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Appointment retrieval working correctly. GET /api/appointments/{id} returns complete appointment details including auto-generated video links (e.g., https://meet.google.com/qbz-Dw5L-y0n). Both provider and client can access appointment details."
 
+  - task: "Working Hours Management"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/provider_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Working hours management working perfectly. GET /api/provider/working-hours retrieves current schedule, PUT /api/provider/working-hours updates schedule with custom hours (Mon-Fri 10:00-18:00, Sat 09:00-13:00, Sun disabled). Slot duration configuration working correctly."
+
+  - task: "Available Slots Generation"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/provider_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Available slots generation working correctly. GET /api/provider/available-slots/{date} and GET /api/client/provider/available-slots/{date} both return matching available time slots based on working hours. Booked slots are properly excluded from available slots."
+
+  - task: "Payment System - Configuration"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Payment configuration working correctly. GET /api/payments/config returns proper configuration status. System correctly detects mock mode when Stripe keys are not configured and switches to simulation mode."
+
+  - task: "Payment System - Payment Intent Creation"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Payment intent creation working correctly. POST /api/payments/create-payment-intent creates payment intents for appointments. In mock mode, generates simulated payment intents with proper structure. Validates appointment ownership and prevents duplicate payments."
+
+  - task: "Payment System - Payment Confirmation"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Payment confirmation working correctly. POST /api/payments/confirm-payment processes payment confirmations, updates appointment status to 'confirmed', creates invoice records, and properly handles both real Stripe and mock mode payments."
+
 frontend:
   - task: "Separate Provider Login Page"
     implemented: true
