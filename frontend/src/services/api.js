@@ -44,7 +44,10 @@ export const providerApi = {
     return api.get('/provider/appointments', { params });
   },
   createClinicalNote: (note) => api.post('/provider/clinical-notes', note),
-  getClinicalNote: (appointmentId) => api.get(`/provider/clinical-notes/${appointmentId}`)
+  getClinicalNote: (appointmentId) => api.get(`/provider/clinical-notes/${appointmentId}`),
+  getWorkingHours: () => api.get('/provider/working-hours'),
+  updateWorkingHours: (hours) => api.put('/provider/working-hours', hours),
+  getAvailableSlots: (date) => api.get(`/provider/available-slots/${date}`)
 };
 
 // Client API
