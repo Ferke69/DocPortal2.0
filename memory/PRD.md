@@ -93,12 +93,23 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
   - Refund request notification → Provider
   - Refund approved notification → Client
   - Refund rejected notification → Client
+  - Appointment reminder (24h before) → Client
   - HTML-formatted professional emails
   - Logs to console in demo mode, ready for Resend/SendGrid in production
+- **Appointment Reminder Scheduler**:
+  - Background task runs hourly
+  - Sends reminders for appointments 24 hours away
+  - Includes video link if applicable
 - **Client Appointments Page**: New `/client/appointments` route
   - View upcoming and past appointments
   - Cancel appointments with refund request option
   - Shows refund eligibility (3+ days before)
+- **Multi-Country Invoice Validation**:
+  - Supports 8 EU countries: UK, SI, DE, FR, ES, IT, PT, NL
+  - Country-specific tax ID, VAT ID, IBAN formats
+  - Dynamic labels and examples based on selected country
+  - Auto-updates VAT rate when country changes
+  - Real-time validation with error messages
 - **Fixed Title Duplication**: Dashboard components now accept `showHeader` prop
 
 ## User Flows
