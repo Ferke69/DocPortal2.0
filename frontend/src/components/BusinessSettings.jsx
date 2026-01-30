@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { providerSettingsApi } from '../services/api';
 import { toast } from '../hooks/use-toast';
 
-const BusinessSettings = () => {
+const BusinessSettings = ({ showHeader = true }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
