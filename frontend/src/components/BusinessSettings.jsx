@@ -559,7 +559,6 @@ const BusinessSettings = ({ showHeader = true }) => {
           <li>• VAT ID ({getCountryConfig().vatLabel}) if VAT registered</li>
           <li>• IBAN required for SEPA bank transfers</li>
           <li>• Standard VAT rate: {getCountryConfig().vatRate}%</li>
-          <li>• Standard VAT rate in Slovenia is 22% (reduced rates: 9.5% and 5%)</li>
           <li>• Invoice must show net amount, VAT amount, and gross total</li>
         </ul>
       </div>
