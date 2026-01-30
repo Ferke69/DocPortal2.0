@@ -220,10 +220,12 @@ const ProviderDashboard = ({ onNavigate }) => {
     { key: 'clients', label: 'My Clients', icon: Users, badge: clients.length, badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' },
     { key: 'appointments', label: 'Appointments', icon: Calendar, badge: stats.appointmentsToday > 0 ? stats.appointmentsToday : null, badgeClass: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300' },
     { key: 'billing', label: 'Billing', icon: DollarSign, badge: pendingInvoices.length > 0 ? pendingInvoices.length : null, badgeClass: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300' },
+    { key: 'refunds', label: 'Refunds', icon: RotateCcw, badge: null },
     { key: 'messages', label: 'Messages', icon: MessageSquare, badge: stats.messagesUnread > 0 ? stats.messagesUnread : null, badgeClass: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300', action: 'messages' },
     { key: 'invites', label: 'Invite Codes', icon: Key, badge: null },
     { key: 'divider', isDivider: true },
     { key: 'schedule', label: 'Schedule Settings', icon: ClipboardList, badge: null },
+    { key: 'business', label: 'Business Settings', icon: Building2, badge: null },
     { key: 'profile', label: 'Profile', icon: User, badge: null, action: 'profile' },
   ];
 
