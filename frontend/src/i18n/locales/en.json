@@ -100,7 +100,9 @@
     "notProviderAccount": "This is not a provider account. Please use the Client Portal to login.",
     "notClientAccount": "This is not a client account. Please use the Provider Portal to login.",
     "haveInviteCode": "Have Invite Code?",
-    "orContinueWith": "Or continue with"
+    "orContinueWith": "Or continue with",
+    "keepMeLoggedIn": "Keep me logged in",
+    "keepLoggedInWarning": "Only use on trusted devices. Your session will not expire."
   },
   "provider": {
     "portal": "Provider Portal",
