@@ -123,6 +123,35 @@ async def request_refund(
     await refund_requests_collection.insert_one(refund_doc)
     await log_audit(user_id, "create", "refund_request", refund_id)
     
+    # Send email notification to provider
+    try:
+        # Get client info
+        client = await users_collection.find_one(
+            {"user_id": user_id},
+            {"_id": 0, "password": 0}
+        )
+        
+        # Get provider info
+        provider = await users_collection.find_one(
+            {"user_id": appointment["providerId"]},
+            {"_id": 0, "password": 0}
+        )
+        
+        if provider and provider.get("email"):
+            await send_refund_requested_notification(
+                provider_email=provider["email"],
+                provider_name=provider.get("name", "Provider"),
+                client_name=client.get("name", "Client") if client else "Client",
+                appointment_type=appointment.get("type", "Appointment"),
+                appointment_date=appointment.get("date", ""),
+                appointment_time=appointment.get("time", ""),
+                amount=refund_doc["amount"],
+                reason=request.reason.strip()
+            )
+            logger.info(f"Refund request notification sent to provider {provider['email']}")
+    except Exception as e:
+        logger.error(f"Failed to send refund request notification: {str(e)}")
+    
     return {
         "id": refund_id,
         "message": "Refund request submitted successfully. Your provider will review it shortly.",
