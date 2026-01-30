@@ -69,7 +69,9 @@
     "licenseNumber": "Številka licence",
     "hourlyRate": "Urna postavka",
     "createProviderAccount": "Ustvari račun Ponudnika",
-    "createAccount": "Ustvari račun"
+    "createAccount": "Ustvari račun",
+    "keepMeLoggedIn": "Ostani prijavljen",
+    "keepLoggedInWarning": "Uporabljajte samo na zaupanja vrednih napravah. Seja ne bo potekla."
   },
   "provider": {
     "portal": "Portal Ponudnika",
