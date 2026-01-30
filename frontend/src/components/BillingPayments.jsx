@@ -437,7 +437,7 @@ const BillingPayments = ({ userType, userId, onBack }) => {
                     <div className="flex items-start space-x-2">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="text-sm font-medium text-green-900 dark:text-green-200">HIPAA Compliant</div>
+                        <div className="text-sm font-medium text-green-900 dark:text-green-200">Secure Payments</div>
                         <div className="text-xs text-green-700 dark:text-green-300 mt-1">
                           Your payment information is stored securely and never shared.
                         </div>
