@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Toaster } from './components/ui/toaster';
+import SessionTimeoutWrapper from './components/SessionTimeoutWrapper';
 
 // Import components
 import LandingPage from './components/LandingPage';
@@ -217,10 +218,12 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
-          <div className="App">
-            <AppRouter />
-            <Toaster />
-          </div>
+          <SessionTimeoutWrapper>
+            <div className="App">
+              <AppRouter />
+              <Toaster />
+            </div>
+          </SessionTimeoutWrapper>
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
