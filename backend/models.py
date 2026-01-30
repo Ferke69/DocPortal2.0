@@ -306,3 +306,80 @@ class PendingItemResponse(PendingItemBase):
     createdAt: datetime
     updatedAt: datetime
     urgency: Optional[Literal['low', 'medium', 'high']] = None
+
+
+
+# Provider Business Settings (for EU/Slovenian invoices)
+class ProviderBusinessSettings(BaseModel):
+    # Business details
+    businessName: Optional[str] = None
+    businessAddress: Optional[str] = None
+    city: Optional[str] = None
+    postalCode: Optional[str] = None
+    country: str = "Slovenia"
+    
+    # Tax information (Slovenia/EU)
+    taxNumber: Optional[str] = None  # Davčna številka
+    vatNumber: Optional[str] = None  # DDV številka (SI + 8 digits)
+    registrationNumber: Optional[str] = None  # Matična številka
+    
+    # Banking details
+    bankName: Optional[str] = None
+    iban: Optional[str] = None
+    bic: Optional[str] = None  # SWIFT/BIC code
+    
+    # Invoice settings
+    invoicePrefix: str = "INV"
+    invoiceNextNumber: int = 1
+    defaultPaymentTermDays: int = 15
+    vatRate: float = 22.0  # Slovenia standard VAT rate
+    
+    # Branding
+    logoUrl: Optional[str] = None
+    
+    # Contact
+    businessEmail: Optional[str] = None
+    businessPhone: Optional[str] = None
+    website: Optional[str] = None
+
+class ProviderSettingsUpdate(BaseModel):
+    businessName: Optional[str] = None
+    businessAddress: Optional[str] = None
+    city: Optional[str] = None
+    postalCode: Optional[str] = None
+    country: Optional[str] = None
+    taxNumber: Optional[str] = None
+    vatNumber: Optional[str] = None
+    registrationNumber: Optional[str] = None
+    bankName: Optional[str] = None
+    iban: Optional[str] = None
+    bic: Optional[str] = None
+    invoicePrefix: Optional[str] = None
+    defaultPaymentTermDays: Optional[int] = None
+    vatRate: Optional[float] = None
+    logoUrl: Optional[str] = None
+    businessEmail: Optional[str] = None
+    businessPhone: Optional[str] = None
+    website: Optional[str] = None
+
+# Refund Request Models
+class RefundRequestCreate(BaseModel):
+    appointmentId: str
+    reason: str  # Required reason from patient
+
+class RefundRequestResponse(BaseModel):
+    id: str
+    appointmentId: str
+    clientId: str
+    providerId: str
+    amount: float
+    reason: str
+    status: Literal['pending', 'approved', 'rejected']
+    providerResponse: Optional[str] = None
+    createdAt: datetime
+    processedAt: Optional[datetime] = None
+    stripeRefundId: Optional[str] = None
+
+class RefundApproval(BaseModel):
+    approved: bool
+    providerResponse: Optional[str] = None
