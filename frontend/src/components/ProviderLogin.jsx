@@ -18,6 +18,7 @@ const ProviderLogin = () => {
     email: '',
     password: ''
   });
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +26,13 @@ const ProviderLogin = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Store keep logged in preference
+    if (keepLoggedIn) {
+      localStorage.setItem('keepLoggedIn', 'true');
+    } else {
+      localStorage.removeItem('keepLoggedIn');
+    }
 
     const result = await login(formData.email, formData.password);
     
@@ -106,6 +114,26 @@ const ProviderLogin = () => {
                 required
                 className="mt-1"
               />
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <input
+                type="checkbox"
+                id="keepLoggedIn"
+                checked={keepLoggedIn}
+                onChange={(e) => setKeepLoggedIn(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div>
+                <Label htmlFor="keepLoggedIn" className="text-sm cursor-pointer">
+                  {t('auth.keepMeLoggedIn') || 'Keep me logged in'}
+                </Label>
+                {keepLoggedIn && (
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                    ⚠️ {t('auth.keepLoggedInWarning') || 'Only use on trusted devices. Your session will not expire.'}
+                  </p>
+                )}
+              </div>
             </div>
 
             <Button 
