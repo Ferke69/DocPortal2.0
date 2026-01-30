@@ -159,6 +159,126 @@ def is_email_configured() -> bool:
     return EMAIL_CONFIGURED
 
 
+async def send_appointment_reminder(
+    client_email: str,
+    client_name: str,
+    provider_name: str,
+    appointment_type: str,
+    appointment_date: str,
+    appointment_time: str,
+    video_link: str = None
+) -> dict:
+    """
+    Send appointment reminder email to client (24 hours before).
+    """
+    subject = f"Reminder: Your appointment tomorrow - {appointment_type}"
+    
+    video_section = ""
+    if video_link:
+        video_section = f"""
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top: 16px;">
+            <tr>
+                <td style="background-color: #dbeafe; border-radius: 8px; padding: 20px; text-align: center;">
+                    <p style="margin: 0 0 12px 0; font-size: 14px; color: #1e40af;"><strong>Video Consultation</strong></p>
+                    <a href="{video_link}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+                        Join Video Call
+                    </a>
+                </td>
+            </tr>
+        </table>
+        """
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <tr>
+                <td style="background-color: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <!-- Header -->
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td style="padding-bottom: 24px; border-bottom: 1px solid #e4e4e7;">
+                                <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #2563eb;">DocPortal</h1>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Content -->
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td style="padding-top: 24px;">
+                                <p style="margin: 0 0 16px 0; font-size: 16px; color: #3f3f46;">
+                                    Hi {client_name.split()[0] if client_name else 'there'},
+                                </p>
+                                <p style="margin: 0 0 24px 0; font-size: 16px; color: #3f3f46;">
+                                    This is a friendly reminder about your upcoming appointment <strong>tomorrow</strong>.
+                                </p>
+                                
+                                <!-- Appointment Details Box -->
+                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td style="background-color: #ecfdf5; border-radius: 8px; padding: 20px; border-left: 4px solid #10b981;">
+                                            <p style="margin: 0 0 8px 0; font-size: 14px; color: #065f46;"><strong>Appointment Details:</strong></p>
+                                            <p style="margin: 0 0 4px 0; font-size: 14px; color: #047857;">Type: {appointment_type}</p>
+                                            <p style="margin: 0 0 4px 0; font-size: 14px; color: #047857;">Date: {appointment_date}</p>
+                                            <p style="margin: 0 0 4px 0; font-size: 14px; color: #047857;">Time: {appointment_time}</p>
+                                            <p style="margin: 0; font-size: 14px; color: #047857;">Provider: {provider_name}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                {video_section}
+                                
+                                <!-- Tips -->
+                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td style="padding-top: 24px;">
+                                            <p style="margin: 0 0 8px 0; font-size: 14px; color: #71717a;"><strong>Tips for your appointment:</strong></p>
+                                            <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #71717a;">
+                                                <li>Be ready 5 minutes before your scheduled time</li>
+                                                <li>Have a stable internet connection for video calls</li>
+                                                <li>Prepare any questions you want to discuss</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Footer -->
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td style="padding-top: 32px; border-top: 1px solid #e4e4e7; margin-top: 32px;">
+                                <p style="margin: 0; font-size: 12px; color: #a1a1aa; text-align: center;">
+                                    Need to reschedule? Log in to DocPortal to manage your appointment.<br>
+                                    This is an automated reminder.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+    
+    result = await send_email(client_email, subject, html_content)
+    
+    # Log for demo mode
+    if not EMAIL_CONFIGURED:
+        logger.info(f"[DEMO] Appointment reminder would be sent to: {client_email}")
+        logger.info(f"[DEMO] Appointment: {appointment_type} on {appointment_date} at {appointment_time}")
+    
+    return result
+
+
 async def send_refund_requested_notification(
     provider_email: str,
     provider_name: str,
