@@ -24,6 +24,8 @@ invite_codes_collection = db['invite_codes']
 working_hours_collection = db['working_hours']
 payments_collection = db['payments']
 pending_items_collection = db['pending_items']
+provider_settings_collection = db['provider_settings']
+refund_requests_collection = db['refund_requests']
 
 async def init_db():
     """Initialize database indexes for performance and uniqueness"""
@@ -69,6 +71,14 @@ async def init_db():
     await pending_items_collection.create_index([("providerId", 1), ("status", 1)])
     await pending_items_collection.create_index([("providerId", 1), ("type", 1)])
     await pending_items_collection.create_index("createdAt")
+    
+    # Provider Settings
+    await provider_settings_collection.create_index("providerId", unique=True)
+    
+    # Refund Requests
+    await refund_requests_collection.create_index([("appointmentId", 1)])
+    await refund_requests_collection.create_index([("clientId", 1), ("status", 1)])
+    await refund_requests_collection.create_index([("providerId", 1), ("status", 1)])
     
     print("✓ Database indexes created")
 
