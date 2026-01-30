@@ -10,7 +10,7 @@ import os
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT settings
-SECRET_KEY = os.getenv("JWT_SECRET", "your-secret-key-change-in-production-hipaa-compliant-2025")
+SECRET_KEY = os.getenv("JWT_SECRET", "your-secret-key-change-in-production-2025")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = int(os.getenv("JWT_EXPIRE_HOURS", "24"))
 
