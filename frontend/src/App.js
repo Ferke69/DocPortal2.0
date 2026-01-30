@@ -15,6 +15,7 @@ import ClientRegister from './components/ClientRegister';
 import AuthCallback from './components/AuthCallback';
 import ProviderDashboard from './components/ProviderDashboard';
 import ClientPortal from './components/ClientPortal';
+import ClientAppointments from './components/ClientAppointments';
 import MessagingCenter from './components/MessagingCenter';
 import AppointmentBooking from './components/AppointmentBooking';
 import BillingPayments from './components/BillingPayments';
