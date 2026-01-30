@@ -447,6 +447,16 @@ const ProviderDashboard = ({ onNavigate }) => {
             <ScheduleSettings />
           )}
 
+          {/* Business Settings Tab */}
+          {activeTab === 'business' && (
+            <BusinessSettings />
+          )}
+
+          {/* Refunds Tab */}
+          {activeTab === 'refunds' && (
+            <RefundManagement />
+          )}
+
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <>
