@@ -336,6 +336,30 @@ async def process_refund(
         
         await log_audit(provider_id, "update", "refund_request", refund_id, {"action": "rejected"})
         
+        # Send email notification to client
+        try:
+            client = await users_collection.find_one(
+                {"user_id": refund_request["clientId"]},
+                {"_id": 0, "password": 0}
+            )
+            appointment = await appointments_collection.find_one(
+                {"_id": refund_request["appointmentId"]},
+                {"_id": 0}
+            )
+            
+            if client and client.get("email"):
+                await send_refund_rejected_notification(
+                    client_email=client["email"],
+                    client_name=client.get("name", "Client"),
+                    appointment_type=appointment.get("type", "Appointment") if appointment else "Appointment",
+                    appointment_date=appointment.get("date", "") if appointment else "",
+                    amount=refund_request["amount"],
+                    provider_response=approval.providerResponse or "Refund request rejected"
+                )
+                logger.info(f"Refund rejected notification sent to client {client['email']}")
+        except Exception as e:
+            logger.error(f"Failed to send refund rejected notification: {str(e)}")
+        
         return {
             "message": "Refund request rejected",
             "status": "rejected"
