@@ -449,12 +449,12 @@ const ProviderDashboard = ({ onNavigate }) => {
 
           {/* Business Settings Tab */}
           {activeTab === 'business' && (
-            <BusinessSettings />
+            <BusinessSettings showHeader={false} />
           )}
 
           {/* Refunds Tab */}
           {activeTab === 'refunds' && (
-            <RefundManagement />
+            <RefundManagement showHeader={false} />
           )}
 
           {/* Overview Tab */}
