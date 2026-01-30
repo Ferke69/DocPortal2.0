@@ -476,7 +476,7 @@ const BusinessSettings = ({ showHeader = true }) => {
             <Input
               value={settings.bankName || ''}
               onChange={(e) => handleInputChange('bankName', e.target.value)}
-              placeholder="NLB d.d."
+              placeholder="Your bank name"
               className="mt-1"
             />
           </div>
@@ -485,21 +485,37 @@ const BusinessSettings = ({ showHeader = true }) => {
             <Input
               value={settings.iban || ''}
               onChange={(e) => handleInputChange('iban', e.target.value.toUpperCase())}
-              placeholder="SI56 0123 4567 8901 234"
-              className="mt-1 font-mono"
+              placeholder={getCountryConfig().ibanExample}
+              className={`mt-1 font-mono ${validationErrors.iban ? 'border-red-500' : ''}`}
             />
+            {validationErrors.iban ? (
+              <p className="text-xs text-red-500 mt-1 flex items-center">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {validationErrors.iban}
+              </p>
+            ) : (
+              <p className="text-xs text-gray-500 mt-1">Example: {getCountryConfig().ibanExample}</p>
+            )}
           </div>
           <div>
             <Label>BIC/SWIFT</Label>
             <Input
               value={settings.bic || ''}
               onChange={(e) => handleInputChange('bic', e.target.value.toUpperCase())}
-              placeholder="LJBASI2X"
-              className="mt-1 font-mono"
+              placeholder="BANKXX2X"
+              className={`mt-1 font-mono ${validationErrors.bic ? 'border-red-500' : ''}`}
             />
+            {validationErrors.bic ? (
+              <p className="text-xs text-red-500 mt-1 flex items-center">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {validationErrors.bic}
+              </p>
+            ) : (
+              <p className="text-xs text-gray-500 mt-1">8 or 11 character bank code</p>
+            )}
           </div>
           <div>
-            <Label>Payment Terms (days) / Rok plačila</Label>
+            <Label>Payment Terms (days)</Label>
             <Input
               type="number"
               value={settings.defaultPaymentTermDays || 15}
@@ -515,12 +531,12 @@ const BusinessSettings = ({ showHeader = true }) => {
         <CardHeader>
           <CardTitle className="flex items-center text-gray-900 dark:text-white">
             <Globe className="h-5 w-5 mr-2 text-teal-600" />
-            Invoice Settings / Nastavitve računa
+            Invoice Settings
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label>Invoice Prefix / Predpona računa</Label>
+            <Label>Invoice Prefix</Label>
             <Input
               value={settings.invoicePrefix || 'INV'}
               onChange={(e) => handleInputChange('invoicePrefix', e.target.value.toUpperCase())}
@@ -534,10 +550,15 @@ const BusinessSettings = ({ showHeader = true }) => {
 
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 dark:text-blue-200 mb-2">EU/Slovenian Invoice Requirements</h4>
+        <h4 className="font-medium text-blue-900 dark:text-blue-200 mb-2 flex items-center">
+          <CheckCircle className="h-4 w-4 mr-2" />
+          EU Invoice Requirements ({getCountryConfig().name})
+        </h4>
         <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
-          <li>• Invoices must include your tax number (davčna številka) and VAT ID if applicable</li>
-          <li>• IBAN is required for EU bank transfers (SEPA payments)</li>
+          <li>• Tax ID ({getCountryConfig().taxLabel}) required for invoicing</li>
+          <li>• VAT ID ({getCountryConfig().vatLabel}) if VAT registered</li>
+          <li>• IBAN required for SEPA bank transfers</li>
+          <li>• Standard VAT rate: {getCountryConfig().vatRate}%</li>
           <li>• Standard VAT rate in Slovenia is 22% (reduced rates: 9.5% and 5%)</li>
           <li>• Invoice must show net amount, VAT amount, and gross total</li>
         </ul>
