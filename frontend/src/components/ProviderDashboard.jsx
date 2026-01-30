@@ -4,7 +4,8 @@ import {
   Calendar, Users, DollarSign, FileText, MessageSquare, Video, Clock, 
   TrendingUp, LogOut, UserPlus, Copy, Check, Trash2, Key, Settings,
   Bell, CreditCard, CheckCircle, XCircle, AlertCircle, Eye, Mail,
-  Phone, MoreVertical, Search, Filter, ChevronRight, Menu, X, User, ClipboardList
+  Phone, MoreVertical, Search, Filter, ChevronRight, Menu, X, User, ClipboardList,
+  Building2, RotateCcw
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -12,10 +13,12 @@ import { Input } from './ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
-import { providerApi, messagesApi, billingApi } from '../services/api';
+import { providerApi, messagesApi, billingApi, refundsApi } from '../services/api';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
 import ScheduleSettings from './ScheduleSettings';
+import BusinessSettings from './BusinessSettings';
+import RefundManagement from './RefundManagement';
 import { useCurrency } from './CurrencySelector';
 import PendingItemsWidget from './PendingItemsWidget';
 import api from '../services/api';
