@@ -121,4 +121,35 @@ export const usersApi = {
   updateProfile: (data) => api.patch('/auth/profile', data)
 };
 
+// Provider Settings API
+export const providerSettingsApi = {
+  getBusinessSettings: () => api.get('/provider/settings/business'),
+  updateBusinessSettings: (data) => api.put('/provider/settings/business', data),
+  uploadLogo: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/provider/settings/logo', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  deleteLogo: () => api.delete('/provider/settings/logo'),
+  getNextInvoiceNumber: () => api.get('/provider/settings/invoice-number')
+};
+
+// Refunds API
+export const refundsApi = {
+  requestRefund: (appointmentId, reason) => api.post('/refunds/request', { appointmentId, reason }),
+  getMyRequests: () => api.get('/refunds/my-requests'),
+  getPendingRefunds: () => api.get('/refunds/pending'),
+  processRefund: (refundId, approved, providerResponse) => 
+    api.post(`/refunds/${refundId}/process`, { approved, providerResponse }),
+  getRefundDetails: (refundId) => api.get(`/refunds/${refundId}`)
+};
+
+// Invoice PDF API
+export const invoicePdfApi = {
+  downloadPdf: (invoiceId) => api.get(`/invoices/${invoiceId}/pdf`, { responseType: 'blob' }),
+  getPreview: (invoiceId) => api.get(`/invoices/${invoiceId}/preview`)
+};
+
 export default api;
