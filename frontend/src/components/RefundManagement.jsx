@@ -8,7 +8,7 @@ import { refundsApi } from '../services/api';
 import { toast } from '../hooks/use-toast';
 import { useCurrency } from './CurrencySelector';
 
-const RefundManagement = () => {
+const RefundManagement = ({ showHeader = true }) => {
   const [loading, setLoading] = useState(true);
   const [pendingRefunds, setPendingRefunds] = useState([]);
   const [allRefunds, setAllRefunds] = useState([]);
