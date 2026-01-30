@@ -154,3 +154,35 @@ async def get_next_invoice_number(current_user: dict = Depends(get_current_provi
     )
     
     return {"invoiceNumber": invoice_number, "nextNumber": next_number + 1}
+
+
+@router.get("/country-configs")
+async def get_country_configurations():
+    """Get invoice validation configurations for all supported EU countries"""
+    return get_all_country_configs()
+
+@router.get("/country-requirements/{country_code}")
+async def get_country_field_requirements(country_code: str):
+    """Get field requirements and examples for a specific country"""
+    return get_country_requirements(country_code.upper())
+
+@router.post("/validate")
+async def validate_business_settings(
+    country_code: str,
+    tax_number: str = None,
+    vat_number: str = None,
+    iban: str = None,
+    bic: str = None
+):
+    """
+    Validate invoice settings for a specific country.
+    Supports: UK, SI, DE, FR, ES, IT, PT, NL
+    """
+    result = validate_invoice_settings(
+        country_code=country_code.upper(),
+        tax_number=tax_number,
+        vat_number=vat_number,
+        iban=iban,
+        bic=bic
+    )
+    return result
