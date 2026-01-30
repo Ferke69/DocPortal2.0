@@ -20,6 +20,7 @@ const ClientLogin = () => {
     email: '',
     password: ''
   });
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -66,6 +67,13 @@ const ClientLogin = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Store keep logged in preference
+    if (keepLoggedIn) {
+      localStorage.setItem('keepLoggedIn', 'true');
+    } else {
+      localStorage.removeItem('keepLoggedIn');
+    }
 
     const result = await login(formData.email, formData.password);
     
