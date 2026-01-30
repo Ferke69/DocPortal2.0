@@ -269,10 +269,27 @@ const BillingPayments = ({ userType, userId, onBack }) => {
                               Pay Now
                             </Button>
                           )}
-                          <Button size="sm" variant="outline" className="w-full dark:border-gray-600 dark:text-gray-300">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full dark:border-gray-600 dark:text-gray-300"
+                            onClick={() => handleDownloadPdf(invoice)}
+                            disabled={downloadingPdf === (invoice._id || invoice.id)}
+                          >
                             <Download className="h-4 w-4 mr-2" />
-                            Download
+                            {downloadingPdf === (invoice._id || invoice.id) ? 'Downloading...' : 'Download PDF'}
                           </Button>
+                          {invoice.status === 'paid' && userType === 'client' && invoice.appointmentId && (
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="w-full text-orange-600 border-orange-300 hover:bg-orange-50 dark:border-orange-800 dark:hover:bg-orange-900/20"
+                              onClick={() => handleRequestRefund(invoice)}
+                            >
+                              <RotateCcw className="h-4 w-4 mr-2" />
+                              Request Refund
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
