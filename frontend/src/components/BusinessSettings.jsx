@@ -357,11 +357,20 @@ const BusinessSettings = ({ showHeader = true }) => {
           </div>
           <div>
             <Label>Country / Država</Label>
-            <Input
+            <select
               value={settings.country || 'Slovenia'}
               onChange={(e) => handleInputChange('country', e.target.value)}
-              className="mt-1"
-            />
+              className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Slovenia">Slovenia</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="Germany">Germany</option>
+              <option value="France">France</option>
+              <option value="Spain">Spain</option>
+              <option value="Italy">Italy</option>
+              <option value="Portugal">Portugal</option>
+              <option value="Netherlands">Netherlands</option>
+            </select>
           </div>
           <div>
             <Label>Business Email</Label>
