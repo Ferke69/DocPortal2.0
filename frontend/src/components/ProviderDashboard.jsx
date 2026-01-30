@@ -476,7 +476,7 @@ const ProviderDashboard = ({ onNavigate }) => {
                   <CardContent className="p-3 sm:p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Today's Appointments</p>
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Today&apos;s Appointments</p>
                         <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{stats.appointmentsToday}</p>
                       </div>
                       <div className="h-8 w-8 sm:h-12 sm:w-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
@@ -512,7 +512,7 @@ const ProviderDashboard = ({ onNavigate }) => {
                   <CardHeader className="pb-2 sm:pb-4">
                     <CardTitle className="flex items-center text-base sm:text-lg text-gray-900 dark:text-white">
                       <Clock className="h-5 w-5 mr-2 text-blue-600" />
-                      Today's Schedule
+                      Today&apos;s Schedule
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -663,7 +663,7 @@ const ProviderDashboard = ({ onNavigate }) => {
           {activeTab === 'appointments' && (
             <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Today's Appointments</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-white">Today&apos;s Appointments</CardTitle>
               </CardHeader>
               <CardContent>
                 {todayAppointments.length > 0 ? (
