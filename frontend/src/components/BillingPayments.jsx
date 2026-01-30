@@ -474,6 +474,20 @@ const BillingPayments = ({ userType, userId, onBack }) => {
           </div>
         </div>
       </div>
+
+      {/* Refund Request Modal */}
+      {showRefundModal && refundAppointment && (
+        <RefundRequestModal
+          appointment={refundAppointment}
+          onClose={() => {
+            setShowRefundModal(false);
+            setRefundAppointment(null);
+          }}
+          onSuccess={() => {
+            fetchInvoices();
+          }}
+        />
+      )}
     </div>
   );
 };
