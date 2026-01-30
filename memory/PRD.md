@@ -89,6 +89,17 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
   - Providers approve/reject with optional response
   - Full refund processed via Stripe upon approval
   - Appointment automatically cancelled
+- **Email Notifications** (DEMO MODE - no API key required):
+  - Refund request notification → Provider
+  - Refund approved notification → Client
+  - Refund rejected notification → Client
+  - HTML-formatted professional emails
+  - Logs to console in demo mode, ready for Resend/SendGrid in production
+- **Client Appointments Page**: New `/client/appointments` route
+  - View upcoming and past appointments
+  - Cancel appointments with refund request option
+  - Shows refund eligibility (3+ days before)
+- **Fixed Title Duplication**: Dashboard components now accept `showHeader` prop
 
 ## User Flows
 
