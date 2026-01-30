@@ -294,6 +294,30 @@ async def process_refund(
         
         await log_audit(provider_id, "update", "refund_request", refund_id, {"action": "approved"})
         
+        # Send email notification to client
+        try:
+            client = await users_collection.find_one(
+                {"user_id": refund_request["clientId"]},
+                {"_id": 0, "password": 0}
+            )
+            appointment = await appointments_collection.find_one(
+                {"_id": refund_request["appointmentId"]},
+                {"_id": 0}
+            )
+            
+            if client and client.get("email"):
+                await send_refund_approved_notification(
+                    client_email=client["email"],
+                    client_name=client.get("name", "Client"),
+                    appointment_type=appointment.get("type", "Appointment") if appointment else "Appointment",
+                    appointment_date=appointment.get("date", "") if appointment else "",
+                    amount=refund_request["amount"],
+                    provider_response=approval.providerResponse
+                )
+                logger.info(f"Refund approved notification sent to client {client['email']}")
+        except Exception as e:
+            logger.error(f"Failed to send refund approved notification: {str(e)}")
+        
         return {
             "message": "Refund approved and processed successfully",
             "refundId": stripe_refund_id,
