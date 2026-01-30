@@ -178,7 +178,7 @@ const MessagingCenter = ({ userType, userId, onBack }) => {
               Back to Dashboard
             </Button>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Messages</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Secure, HIPAA-compliant messaging</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Secure messaging with your healthcare provider</p>
           </div>
           <ThemeToggle />
         </div>
@@ -301,7 +301,7 @@ const MessagingCenter = ({ userType, userId, onBack }) => {
                   <div className="border-t dark:border-gray-700 p-4">
                     <div className="flex space-x-2">
                       <Textarea
-                        placeholder="Type your message... (HIPAA-compliant)"
+                        placeholder="Type your message..."
                         value={messageText}
                         onChange={(e) => setMessageText(e.target.value)}
                         onKeyPress={(e) => {
@@ -321,7 +321,7 @@ const MessagingCenter = ({ userType, userId, onBack }) => {
                       </Button>
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      <Badge variant="outline" className="text-xs dark:border-gray-600">Encrypted</Badge> All messages are HIPAA-compliant and encrypted
+                      <Badge variant="outline" className="text-xs dark:border-gray-600">Encrypted</Badge> All messages are securely encrypted
                     </p>
                   </div>
                 </CardContent>
