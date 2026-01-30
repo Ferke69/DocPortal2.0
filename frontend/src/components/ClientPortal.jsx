@@ -121,6 +121,16 @@ const ClientPortal = ({ onNavigate }) => {
             
             <nav className="space-y-2">
               <button
+                onClick={() => { onNavigate('appointments'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center px-4 py-3 rounded-lg text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Clock className="h-5 w-5 mr-3" />
+                My Appointments
+                {stats.upcomingAppointments > 0 && (
+                  <Badge className="ml-auto bg-blue-100 text-blue-700">{stats.upcomingAppointments}</Badge>
+                )}
+              </button>
+              <button
                 onClick={() => { onNavigate('book-appointment'); setMobileMenuOpen(false); }}
                 className="w-full flex items-center px-4 py-3 rounded-lg text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
