@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCard, ArrowLeft, Download, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { CreditCard, ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText, RotateCcw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
-import { billingApi } from '../services/api';
+import { billingApi, invoicePdfApi } from '../services/api';
 import { toast } from '../hooks/use-toast';
 import ThemeToggle from './ThemeToggle';
+import RefundRequestModal from './RefundRequestModal';
 
 const BillingPayments = ({ userType, userId, onBack }) => {
   const { user } = useAuth();
@@ -16,6 +17,9 @@ const BillingPayments = ({ userType, userId, onBack }) => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(null);
+  const [showRefundModal, setShowRefundModal] = useState(false);
+  const [refundAppointment, setRefundAppointment] = useState(null);
   const [paymentDetails, setPaymentDetails] = useState({
     cardNumber: '',
     cardName: '',
@@ -113,6 +117,52 @@ const BillingPayments = ({ userType, userId, onBack }) => {
   const handlePayNow = (invoice) => {
     setSelectedInvoice(invoice);
     setShowPaymentForm(true);
+  };
+
+  const handleDownloadPdf = async (invoice) => {
+    const invoiceId = invoice._id || invoice.id;
+    try {
+      setDownloadingPdf(invoiceId);
+      const response = await invoicePdfApi.downloadPdf(invoiceId);
+      
+      // Create blob and download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `invoice_${invoiceId.slice(-8)}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast({
+        title: "PDF Downloaded",
+        description: "Invoice PDF has been downloaded successfully."
+      });
+    } catch (err) {
+      console.error('Error downloading PDF:', err);
+      toast({
+        title: "Download Failed",
+        description: err.response?.data?.detail || "Failed to download invoice PDF. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setDownloadingPdf(null);
+    }
+  };
+
+  const handleRequestRefund = (invoice) => {
+    // Create a mock appointment object from invoice data for refund request
+    setRefundAppointment({
+      _id: invoice.appointmentId || invoice._id,
+      id: invoice.appointmentId || invoice.id,
+      type: invoice.description,
+      date: invoice.invoiceDate || invoice.date,
+      time: '---',
+      amount: invoice.amount
+    });
+    setShowRefundModal(true);
   };
 
   const totalPaid = invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0);
