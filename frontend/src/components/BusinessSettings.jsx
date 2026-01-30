@@ -89,9 +89,67 @@ const BusinessSettings = ({ showHeader = true }) => {
 
   const handleInputChange = (field, value) => {
     setSettings(prev => ({ ...prev, [field]: value }));
+    // Clear validation error for this field
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({ ...prev, [field]: null }));
+    }
+  };
+
+  const validateFields = () => {
+    const errors = {};
+    const config = getCountryConfig();
+    
+    // Validate IBAN format if provided
+    if (settings.iban) {
+      const cleanIban = settings.iban.replace(/\s/g, '').toUpperCase();
+      if (cleanIban.length < 15 || cleanIban.length > 34) {
+        errors.iban = 'IBAN must be between 15 and 34 characters';
+      } else if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(cleanIban)) {
+        errors.iban = 'Invalid IBAN format';
+      }
+    }
+    
+    // Validate BIC/SWIFT if provided
+    if (settings.bic) {
+      const cleanBic = settings.bic.replace(/\s/g, '').toUpperCase();
+      if (!/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(cleanBic)) {
+        errors.bic = 'Invalid BIC/SWIFT format (e.g., LJBASI2X)';
+      }
+    }
+    
+    // Validate VAT number format based on country
+    if (settings.vatNumber) {
+      const cleanVat = settings.vatNumber.replace(/[\s\-]/g, '').toUpperCase();
+      const vatPatterns = {
+        'UK': /^GB\d{9}$|^GB\d{12}$/,
+        'SI': /^SI\d{8}$/,
+        'DE': /^DE\d{9}$/,
+        'FR': /^FR[A-Z0-9]{2}\d{9}$/,
+        'ES': /^ES[A-Z0-9]\d{7}[A-Z0-9]$/,
+        'IT': /^IT\d{11}$/,
+        'PT': /^PT\d{9}$/,
+        'NL': /^NL\d{9}B\d{2}$/
+      };
+      const pattern = vatPatterns[selectedCountryCode];
+      if (pattern && !pattern.test(cleanVat)) {
+        errors.vatNumber = `Invalid ${config.vatLabel}. Example: ${config.vatExample}`;
+      }
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSave = async () => {
+    if (!validateFields()) {
+      toast({
+        title: "Validation Error",
+        description: "Please correct the highlighted fields before saving.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       setSaving(true);
       await providerSettingsApi.updateBusinessSettings(settings);
