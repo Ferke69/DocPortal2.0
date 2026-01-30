@@ -24,6 +24,9 @@ from routes.invoice_pdf_routes import router as invoice_pdf_router
 # Import database initialization
 from database import init_db
 
+# Import reminder scheduler
+from services.reminder_scheduler import start_reminder_scheduler
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
