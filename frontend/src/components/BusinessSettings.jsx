@@ -408,49 +408,56 @@ const BusinessSettings = ({ showHeader = true }) => {
         <CardHeader>
           <CardTitle className="flex items-center text-gray-900 dark:text-white">
             <FileText className="h-5 w-5 mr-2 text-purple-600" />
-            Tax Information / Davčni podatki
+            Tax Information ({getCountryConfig().name})
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label>Tax Number / Davčna številka</Label>
+            <Label>{getCountryConfig().taxLabel}</Label>
             <Input
               value={settings.taxNumber || ''}
               onChange={(e) => handleInputChange('taxNumber', e.target.value)}
-              placeholder="12345678"
+              placeholder={getCountryConfig().taxExample}
               className="mt-1"
             />
-            <p className="text-xs text-gray-500 mt-1">8-digit Slovenian tax number</p>
+            <p className="text-xs text-gray-500 mt-1">Example: {getCountryConfig().taxExample}</p>
           </div>
           <div>
-            <Label>VAT ID / ID za DDV</Label>
+            <Label>{getCountryConfig().vatLabel}</Label>
             <Input
               value={settings.vatNumber || ''}
               onChange={(e) => handleInputChange('vatNumber', e.target.value)}
-              placeholder="SI12345678"
-              className="mt-1"
+              placeholder={getCountryConfig().vatExample}
+              className={`mt-1 ${validationErrors.vatNumber ? 'border-red-500' : ''}`}
             />
-            <p className="text-xs text-gray-500 mt-1">SI + 8 digits for EU VAT</p>
+            {validationErrors.vatNumber ? (
+              <p className="text-xs text-red-500 mt-1 flex items-center">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {validationErrors.vatNumber}
+              </p>
+            ) : (
+              <p className="text-xs text-gray-500 mt-1">Example: {getCountryConfig().vatExample}</p>
+            )}
           </div>
           <div>
-            <Label>Registration Number / Matična številka</Label>
+            <Label>Registration Number</Label>
             <Input
               value={settings.registrationNumber || ''}
               onChange={(e) => handleInputChange('registrationNumber', e.target.value)}
-              placeholder="1234567000"
+              placeholder="Company registration"
               className="mt-1"
             />
           </div>
           <div>
-            <Label>VAT Rate / DDV stopnja (%)</Label>
+            <Label>VAT Rate (%)</Label>
             <Input
               type="number"
               step="0.1"
-              value={settings.vatRate || 22}
+              value={settings.vatRate || getCountryConfig().vatRate}
               onChange={(e) => handleInputChange('vatRate', parseFloat(e.target.value))}
               className="mt-1"
             />
-            <p className="text-xs text-gray-500 mt-1">Slovenia standard: 22%</p>
+            <p className="text-xs text-gray-500 mt-1">{getCountryConfig().name} standard: {getCountryConfig().vatRate}%</p>
           </div>
         </CardContent>
       </Card>
@@ -460,12 +467,12 @@ const BusinessSettings = ({ showHeader = true }) => {
         <CardHeader>
           <CardTitle className="flex items-center text-gray-900 dark:text-white">
             <CreditCard className="h-5 w-5 mr-2 text-orange-600" />
-            Banking Details / Bančni podatki
+            Banking Details
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label>Bank Name / Ime banke</Label>
+            <Label>Bank Name</Label>
             <Input
               value={settings.bankName || ''}
               onChange={(e) => handleInputChange('bankName', e.target.value)}
