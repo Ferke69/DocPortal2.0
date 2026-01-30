@@ -212,107 +212,58 @@ const ProviderDashboard = ({ onNavigate }) => {
     );
   }
 
-  const NavItems = () => (
+  const navItems = [
+    { key: 'overview', label: 'Overview', icon: TrendingUp, badge: null },
+    { key: 'clients', label: 'My Clients', icon: Users, badge: clients.length, badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' },
+    { key: 'appointments', label: 'Appointments', icon: Calendar, badge: stats.appointmentsToday > 0 ? stats.appointmentsToday : null, badgeClass: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300' },
+    { key: 'billing', label: 'Billing', icon: DollarSign, badge: pendingInvoices.length > 0 ? pendingInvoices.length : null, badgeClass: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300' },
+    { key: 'messages', label: 'Messages', icon: MessageSquare, badge: stats.messagesUnread > 0 ? stats.messagesUnread : null, badgeClass: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300', action: 'messages' },
+    { key: 'invites', label: 'Invite Codes', icon: Key, badge: null },
+    { key: 'divider', isDivider: true },
+    { key: 'schedule', label: 'Schedule Settings', icon: ClipboardList, badge: null },
+    { key: 'profile', label: 'Profile', icon: User, badge: null, action: 'profile' },
+  ];
+
+  const renderNavItems = () => (
     <>
-      <button
-        onClick={() => handleNavClick('overview')}
-        className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-          activeTab === 'overview' 
-            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
-      >
-        <TrendingUp className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Overview</span>
-      </button>
-      
-      <button
-        onClick={() => handleNavClick('clients')}
-        className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-          activeTab === 'clients' 
-            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
-      >
-        <Users className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>My Clients</span>
-        <Badge className="ml-auto bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">{clients.length}</Badge>
-      </button>
-      
-      <button
-        onClick={() => handleNavClick('appointments')}
-        className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-          activeTab === 'appointments' 
-            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
-      >
-        <Calendar className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Appointments</span>
-        {stats.appointmentsToday > 0 && (
-          <Badge className="ml-auto bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300">{stats.appointmentsToday}</Badge>
-        )}
-      </button>
-      
-      <button
-        onClick={() => handleNavClick('billing')}
-        className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-          activeTab === 'billing' 
-            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
-      >
-        <DollarSign className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Billing</span>
-        {pendingInvoices.length > 0 && (
-          <Badge className="ml-auto bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">{pendingInvoices.length}</Badge>
-        )}
-      </button>
-      
-      <button
-        onClick={() => { onNavigate('messages'); setMobileMenuOpen(false); }}
-        className="w-full flex items-center px-4 py-3 rounded-lg text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-      >
-        <MessageSquare className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Messages</span>
-        {stats.messagesUnread > 0 && (
-          <Badge className="ml-auto bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">{stats.messagesUnread}</Badge>
-        )}
-      </button>
-      
-      <button
-        onClick={() => handleNavClick('invites')}
-        className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-          activeTab === 'invites' 
-            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
-      >
-        <Key className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Invite Codes</span>
-      </button>
-
-      <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-
-      <button
-        onClick={() => handleNavClick('schedule')}
-        className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-          activeTab === 'schedule' 
-            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
-      >
-        <ClipboardList className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Schedule Settings</span>
-      </button>
-
-      <button
-        onClick={() => { navigate('/provider/profile'); setMobileMenuOpen(false); }}
-        className="w-full flex items-center px-4 py-3 rounded-lg text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-      >
-        <User className="h-5 w-5 mr-3 flex-shrink-0" />
-        <span>Profile</span>
-      </button>
+      {navItems.map((item) => {
+        if (item.isDivider) {
+          return <div key={item.key} className="border-t border-gray-200 dark:border-gray-700 my-2"></div>;
+        }
+        
+        const IconComponent = item.icon;
+        const isActive = activeTab === item.key;
+        
+        const handleClick = () => {
+          if (item.action === 'messages') {
+            onNavigate('messages');
+            setMobileMenuOpen(false);
+          } else if (item.action === 'profile') {
+            navigate('/provider/profile');
+            setMobileMenuOpen(false);
+          } else {
+            handleNavClick(item.key);
+          }
+        };
+        
+        const baseClass = item.action 
+          ? "w-full flex items-center px-4 py-3 rounded-lg text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          : `w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
+              isActive 
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`;
+        
+        return (
+          <button key={item.key} onClick={handleClick} className={baseClass}>
+            <IconComponent className="h-5 w-5 mr-3 flex-shrink-0" />
+            <span>{item.label}</span>
+            {item.badge !== null && (
+              <Badge className={`ml-auto ${item.badgeClass}`}>{item.badge}</Badge>
+            )}
+          </button>
+        );
+      })}
     </>
   );
 
@@ -329,7 +280,7 @@ const ProviderDashboard = ({ onNavigate }) => {
               </button>
             </div>
             <nav className="space-y-1 flex-1 overflow-y-auto">
-              <NavItems />
+              {renderNavItems()}
             </nav>
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
               <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -412,7 +363,7 @@ const ProviderDashboard = ({ onNavigate }) => {
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Provider Dashboard</p>
         </div>
         <nav className="px-4 space-y-1">
-          <NavItems />
+          {renderNavItems()}
         </nav>
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
