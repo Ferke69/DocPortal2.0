@@ -417,8 +417,10 @@ const ProviderDashboard = ({ onNavigate }) => {
                 {activeTab === 'clients' && 'My Clients'}
                 {activeTab === 'appointments' && 'Appointments'}
                 {activeTab === 'billing' && 'Billing & Payments'}
+                {activeTab === 'refunds' && 'Refund Requests'}
                 {activeTab === 'invites' && 'Invite Codes'}
                 {activeTab === 'schedule' && 'Schedule Settings'}
+                {activeTab === 'business' && 'Business Settings'}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">Welcome back, {user?.name?.split(' ')[0]}</p>
             </div>
