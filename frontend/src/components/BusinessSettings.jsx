@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Upload, Save, Trash2, FileText, CreditCard, Globe } from 'lucide-react';
+import { Building2, Upload, Save, Trash2, FileText, CreditCard, Globe, AlertCircle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -7,10 +7,35 @@ import { Label } from './ui/label';
 import { providerSettingsApi } from '../services/api';
 import { toast } from '../hooks/use-toast';
 
+// Country configurations for validation
+const COUNTRY_CONFIGS = {
+  "UK": { name: "United Kingdom", taxLabel: "UTR", taxExample: "1234567890", vatLabel: "VAT Number", vatExample: "GB123456789", ibanExample: "GB29NWBK60161331926819", vatRate: 20.0 },
+  "SI": { name: "Slovenia", taxLabel: "Davčna številka", taxExample: "12345678", vatLabel: "ID za DDV", vatExample: "SI12345678", ibanExample: "SI56012345678901234", vatRate: 22.0 },
+  "DE": { name: "Germany", taxLabel: "Steuernummer", taxExample: "12345678901", vatLabel: "USt-IdNr.", vatExample: "DE123456789", ibanExample: "DE89370400440532013000", vatRate: 19.0 },
+  "FR": { name: "France", taxLabel: "SIRET", taxExample: "12345678901234", vatLabel: "N° TVA", vatExample: "FR12345678901", ibanExample: "FR7630006000011234567890189", vatRate: 20.0 },
+  "ES": { name: "Spain", taxLabel: "NIF/CIF", taxExample: "B12345678", vatLabel: "NIF-IVA", vatExample: "ESB12345678", ibanExample: "ES9121000418450200051332", vatRate: 21.0 },
+  "IT": { name: "Italy", taxLabel: "Codice Fiscale", taxExample: "12345678901", vatLabel: "Partita IVA", vatExample: "IT12345678901", ibanExample: "IT60X0542811101000000123456", vatRate: 22.0 },
+  "PT": { name: "Portugal", taxLabel: "NIF", taxExample: "123456789", vatLabel: "NIF/NIPC", vatExample: "PT123456789", ibanExample: "PT50000201231234567890154", vatRate: 23.0 },
+  "NL": { name: "Netherlands", taxLabel: "BSN/RSIN", taxExample: "123456789", vatLabel: "BTW-nummer", vatExample: "NL123456789B01", ibanExample: "NL91ABNA0417164300", vatRate: 21.0 }
+};
+
+const COUNTRY_NAME_TO_CODE = {
+  "United Kingdom": "UK", "UK": "UK",
+  "Slovenia": "SI", "Slovenija": "SI",
+  "Germany": "DE", "Deutschland": "DE",
+  "France": "FR",
+  "Spain": "ES", "España": "ES",
+  "Italy": "IT", "Italia": "IT",
+  "Portugal": "PT",
+  "Netherlands": "NL", "Nederland": "NL"
+};
+
 const BusinessSettings = ({ showHeader = true }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [selectedCountryCode, setSelectedCountryCode] = useState('SI');
   const [settings, setSettings] = useState({
     businessName: '',
     businessAddress: '',
@@ -36,6 +61,18 @@ const BusinessSettings = ({ showHeader = true }) => {
     fetchSettings();
   }, []);
 
+  useEffect(() => {
+    // Update country code when country changes
+    const code = COUNTRY_NAME_TO_CODE[settings.country] || 'SI';
+    setSelectedCountryCode(code);
+    
+    // Update VAT rate based on country
+    const config = COUNTRY_CONFIGS[code];
+    if (config && settings.vatRate !== config.vatRate) {
+      setSettings(prev => ({ ...prev, vatRate: config.vatRate }));
+    }
+  }, [settings.country]);
+
   const fetchSettings = async () => {
     try {
       setLoading(true);
@@ -47,6 +84,8 @@ const BusinessSettings = ({ showHeader = true }) => {
       setLoading(false);
     }
   };
+
+  const getCountryConfig = () => COUNTRY_CONFIGS[selectedCountryCode] || COUNTRY_CONFIGS['SI'];
 
   const handleInputChange = (field, value) => {
     setSettings(prev => ({ ...prev, [field]: value }));
