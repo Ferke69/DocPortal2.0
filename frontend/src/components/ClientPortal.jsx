@@ -286,7 +286,7 @@ const ClientPortal = ({ onNavigate }) => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-8">
           <Card 
             className="dark:bg-gray-800 dark:border-gray-700 cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => onNavigate('book-appointment')}
+            onClick={() => onNavigate('appointments')}
           >
             <CardContent className="p-3 sm:p-4 text-center">
               <div className="h-8 w-8 sm:h-10 sm:w-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
