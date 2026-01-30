@@ -69,6 +69,27 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 - **ClientPortal.jsx**: `useEffect` hook dependency array verified as compliant, fixed unescaped apostrophe
 - **All files**: Fixed unescaped apostrophe characters (Today's → Today&apos;s, You're → You&apos;re)
 
+### Session Security & Payment Features (Jan 2026)
+- **Auto-logout**: 30 minutes of inactivity triggers automatic logout
+- **Keep me logged in**: Checkbox option with security warning (persistent session)
+- **Session timeout hook**: `useSessionTimeout.js` monitors user activity
+- **Provider Business Settings**: EU/Slovenian invoice compliance
+  - Business name, address, tax number (davčna številka)
+  - VAT ID (DDV), registration number
+  - Bank details (IBAN, BIC/SWIFT)
+  - Logo upload capability
+- **PDF Invoice Generation**: European compliant invoices with:
+  - Provider branding and details
+  - Client information
+  - Net amount, VAT (22% Slovenia), gross total
+  - Payment instructions and bank details
+- **Refund System**:
+  - Patients can request refunds 3+ days before appointment
+  - Must provide reason in text box
+  - Providers approve/reject with optional response
+  - Full refund processed via Stripe upon approval
+  - Appointment automatically cancelled
+
 ## User Flows
 
 ### Provider Onboarding
@@ -111,7 +132,27 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 - `/app/frontend/src/components/ProviderRegister.jsx` - Provider registration
 - `/app/frontend/src/components/ClientRegister.jsx` - Client registration with invite code
 - `/app/frontend/src/components/ProviderDashboard.jsx` - Provider dashboard with invite modal
+- `/app/frontend/src/components/BusinessSettings.jsx` - EU/Slovenia business settings
+- `/app/frontend/src/components/RefundManagement.jsx` - Provider refund approval
+- `/app/frontend/src/components/RefundRequestModal.jsx` - Client refund request
+- `/app/frontend/src/hooks/useSessionTimeout.js` - Auto-logout on inactivity
 - `/app/backend/routes/auth_routes.py` - Auth endpoints including invite validation
 - `/app/backend/routes/provider_routes.py` - Invite code generation endpoints
+- `/app/backend/routes/provider_settings_routes.py` - Business settings & logo upload
+- `/app/backend/routes/refund_routes.py` - Refund request and approval
+- `/app/backend/routes/invoice_pdf_routes.py` - PDF invoice generation
 - `/app/backend/database.py` - MongoDB collections including invite_codes
 - `/app/API_KEYS_GUIDE.md` - Production API key setup
+
+## New API Endpoints (Jan 2026)
+- `GET /api/provider/settings/business` - Get business settings
+- `PUT /api/provider/settings/business` - Update business settings
+- `POST /api/provider/settings/logo` - Upload logo
+- `DELETE /api/provider/settings/logo` - Remove logo
+- `GET /api/provider/settings/invoice-number` - Get next invoice number
+- `POST /api/refunds/request` - Client requests refund
+- `GET /api/refunds/my-requests` - Get user's refund requests
+- `GET /api/refunds/pending` - Get pending refunds (provider)
+- `POST /api/refunds/{id}/process` - Approve/reject refund
+- `GET /api/invoices/{id}/pdf` - Download invoice PDF
+- `GET /api/invoices/{id}/preview` - Preview invoice data
