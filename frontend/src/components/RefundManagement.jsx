@@ -91,10 +91,12 @@ const RefundManagement = ({ showHeader = true }) => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Refund Requests</h2>
-        <p className="text-gray-600 dark:text-gray-400">Review and process patient refund requests</p>
-      </div>
+      {showHeader && (
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Refund Requests</h2>
+          <p className="text-gray-600 dark:text-gray-400">Review and process patient refund requests</p>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-700">
