@@ -6,8 +6,16 @@ from database import (
 )
 from models import RefundRequestCreate, RefundApproval
 from datetime import datetime, timezone, timedelta
+from services.email_service import (
+    send_refund_requested_notification,
+    send_refund_approved_notification,
+    send_refund_rejected_notification
+)
 import uuid
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Stripe integration
 try:
