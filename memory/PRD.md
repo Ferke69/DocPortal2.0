@@ -61,6 +61,14 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 - **Frontend**: 100% working (separate login pages, invite code flow)
 - **Integration**: Full doctor-centric auth flow working end-to-end
 
+## Recent Updates (Dec 2025)
+### Frontend ESLint Issues Fixed
+- **ProviderDashboard.jsx**: Refactored nested `NavItems` component into data-driven `renderNavItems()` function
+- **AppointmentBooking.jsx**: `useEffect` hooks dependency arrays verified as compliant
+- **ScheduleSettings.jsx**: `useEffect` hook dependency array verified as compliant
+- **ClientPortal.jsx**: `useEffect` hook dependency array verified as compliant, fixed unescaped apostrophe
+- **All files**: Fixed unescaped apostrophe characters (Today's → Today&apos;s, You're → You&apos;re)
+
 ## User Flows
 
 ### Provider Onboarding
