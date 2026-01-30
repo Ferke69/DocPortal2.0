@@ -10,7 +10,7 @@ Build a clone of SimplePractice (practice management platform for healthcare pro
 - **Core Features**: Appointments, Messaging, Billing (Stripe), Video Consultations
 - **Internationalization**: 8 European languages (EN, SL, DE, FR, ES, IT, PT, NL)
 - **Theming**: Light/Dark mode toggle
-- **HIPAA Compliance**: Basic security features
+- **Security**: Encrypted messaging, secure payments, audit logging
 
 ## Architecture
 
