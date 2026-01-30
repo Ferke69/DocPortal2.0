@@ -37,14 +37,12 @@ const AppointmentBooking = ({ userType, userId, onBack }) => {
   useEffect(() => {
     fetchProvider();
     fetchPaymentConfig();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (selectedDate && selectedProvider) {
       fetchAvailableSlots(selectedDate);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, selectedProvider]);
 
   const fetchProvider = async () => {

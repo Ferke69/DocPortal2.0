@@ -41,7 +41,6 @@ const ScheduleSettings = ({ onBack }) => {
 
   useEffect(() => {
     fetchSchedule();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSchedule = async () => {

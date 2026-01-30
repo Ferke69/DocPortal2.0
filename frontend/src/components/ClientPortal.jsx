@@ -38,7 +38,6 @@ const ClientPortal = ({ onNavigate }) => {
 
   useEffect(() => {
     fetchDashboardData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
@@ -509,7 +508,7 @@ const ClientPortal = ({ onNavigate }) => {
                 <div className="text-center py-6 text-gray-500 dark:text-gray-400">
                   <CreditCard className="h-8 w-8 sm:h-10 sm:w-10 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
                   <p className="text-sm">No pending payments</p>
-                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">You're all caught up! ✓</p>
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">You&apos;re all caught up! ✓</p>
                 </div>
               )}
             </CardContent>
