@@ -139,16 +139,26 @@ const BusinessSettings = ({ showHeader = true }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Business Settings</h2>
-          <p className="text-gray-600 dark:text-gray-400">Configure your business details for invoicing (EU/Slovenia compliant)</p>
+      {showHeader && (
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Business Settings</h2>
+            <p className="text-gray-600 dark:text-gray-400">Configure your business details for invoicing (EU/Slovenia compliant)</p>
+          </div>
+          <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700">
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? 'Saving...' : 'Save Changes'}
+          </Button>
         </div>
-        <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700">
-          <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Saving...' : 'Save Changes'}
-        </Button>
-      </div>
+      )}
+      {!showHeader && (
+        <div className="flex justify-end">
+          <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700">
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </div>
+      )}
 
       {/* Logo Upload */}
       <Card className="dark:bg-gray-800 dark:border-gray-700">
