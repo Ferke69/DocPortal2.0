@@ -83,7 +83,7 @@ async def init_db():
     print("✓ Database indexes created")
 
 async def log_audit(user_id: str, action: str, resource_type: str, resource_id: str, details: dict = None):
-    """Log audit trail for HIPAA compliance"""
+    """Log audit trail for security and compliance"""
     from datetime import datetime
     
     audit_entry = {
