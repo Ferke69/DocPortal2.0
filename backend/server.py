@@ -102,6 +102,11 @@ async def startup_event():
     try:
         await init_db()
         logger.info("✓ Database initialized successfully")
+        
+        # Start appointment reminder scheduler
+        start_reminder_scheduler()
+        logger.info("✓ Reminder scheduler started")
+        
         logger.info("✓ DocPortal API is ready")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
